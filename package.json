@@ -1,0 +1,25 @@
+{
+  "name": "foundation",
+  "version": "0.0.1",
+  "description": "An API to serve content stored in markdown files on disk. Intended to serve as the data layer for lightweight static site generators such as Pequeno.",
+  "main": "app/index.js",
+  "repository": "git@github.com:akshat1/foundation.git",
+  "author": "akshat1 <akshat.sh@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "test": "nyc ts-mocha src/**/*.test.ts",
+    "clean": "rm -rf app/ coverage/",
+    "prepare": "yarn run clean; yarn run build",
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^1.0.2",
+    "mocha": "^10.1.0",
+    "sinon": "^14.0.1",
+    "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "glob": "^8.0.3",
+    "marked": "^4.2.0"
+  }
+}

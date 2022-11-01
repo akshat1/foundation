@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "sourceMap": true,
+    "outDir": "app",
+    "lib": [
+      "ES6"
+    ]
+  },
+  "include": [
+    "./src/**/*"
+  ],
+  "exclude": [
+    "*.test.ts"
+  ]
+}
