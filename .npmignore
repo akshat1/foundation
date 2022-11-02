@@ -1,0 +1,5 @@
+src/
+.vscode/
+.nycrc
+.nyc_output/
+tsconfig.json

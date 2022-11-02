@@ -1,2 +1,4 @@
 node_modules/
-app/
+lib/
+docs/
+.nyc_output/
