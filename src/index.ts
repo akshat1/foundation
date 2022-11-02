@@ -1,17 +1,24 @@
 import ContentItem, { ContentItemType, toContentItem } from "./ContentItem";
 import { promises as fs, stat } from "fs";
 import { promisify } from "util";
-import callbackGlob from "glob";
+import { glob as callbackGlob } from "glob";
 import frontmatter from "front-matter";
 import { GetSlug, ToHTML } from "./typedefs";
+import { FrontMatterAttributes } from "./FrontMatterAttributes";
+
+export {
+  ContentItemType,
+  ContentItem,
+  FrontMatterAttributes,
+};
 
 const glob = promisify(callbackGlob);
 
 export interface Patrika {
-  getAll: (GetCollectionArgs) => ContentItem[];
-  getPages: (GetCollectionArgs) => ContentItem[];
-  getPosts: (GetCollectionArgs) => ContentItem[];
-  getTags: (GetCollectionArgs) => string[];
+  getAll(): ContentItem[];
+  getPages(): ContentItem[];
+  getPosts(): ContentItem[];
+  getTags(): string[];
 }
 
 export interface GetPatrikaArgs {
@@ -70,7 +77,7 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
       }
 
       const markdown = (await fs.readFile(filePath)).toString();
-      const fmData = frontmatter(markdown);
+      const fmData = frontmatter<FrontMatterAttributes>(markdown);
       const item = toContentItem({
         filePath,
         stats,
@@ -86,6 +93,7 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
           tagsMap.set(tag, []);
         }
 
+        /// @ts-ignore We KNOW the result of this get is a string[] because the previous code block ensures that.
         tagsMap.get(tag).push(item);
       }
     }

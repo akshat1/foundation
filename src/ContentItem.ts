@@ -1,4 +1,6 @@
+import { FrontMatterResult } from "front-matter";
 import { Stats } from "fs";
+import { FrontMatterAttributes } from "./FrontMatterAttributes";
 import { ToHTML } from "./typedefs";
 import { GetSlug } from "./typedefs";
 
@@ -8,9 +10,9 @@ export enum ContentItemType {
 };
 
 export default interface ContentItem {
-  author: string[];
+  authors: string[];
   collections: string[];
-  createdAt: string; // Date
+  publishDate: string|null; // Date
   draft: boolean;
   html: string;
   markdown: string;
@@ -18,37 +20,23 @@ export default interface ContentItem {
   tags: string[];
   title: string;
   type: ContentItemType;
-  updatedAt: string; // Date
 };
 
-const getCreatedAt = (args: { attributes: Record<string, any>, stats: Stats }): string|null => {
-  const strDate = args.attributes?.createdAt || args.stats.ctime;
+const getPublishDate = (args: { attributes: Record<string, any>, stats: Stats }): string|null => {
+  const strDate = args.attributes?.publishDate || args.stats.ctime;
   if (strDate) {
     const date = new Date(strDate);
-    return `${date.getFullYear}-${date.getMonth()}-${date.getDay()}`;
-  }
-
-  return null;
-};
-
-const getUpdatedAt = (args: { attributes: Record<string, any>, stats: Stats }): string|null => {
-  const strDate = args.attributes?.updatedAt || args.stats.mtime;
-  if (strDate) {
-    const date = new Date(strDate);
-    return `${date.getFullYear}-${date.getMonth()}-${date.getDay()}`;
+    return date.toISOString().replace(/T.*$/, "");
   }
 
   return null;
 };
 
 export interface ToContentItemArgs {
-  fmData: {
-    attributes: Record<string, any>,
-    body: string,
-  },
+  fmData: FrontMatterResult<FrontMatterAttributes>,
   toHTML: ToHTML,
   getSlug: GetSlug,
-  filePath,
+  filePath: string,
   stats: Stats,
   type: ContentItemType,
 }
@@ -69,24 +57,29 @@ export const toContentItem = (args: ToContentItemArgs): ContentItem => {
   } = fmData;
 
   const {
-    author,
-    collections,
+    authors = [],
+    collections = [],
     draft = false,
-    tags,
+    tags = [],
     title,
   } = attributes;
 
+  const publishDate = getPublishDate({ attributes, stats });
+
   return {
-    author,
+    authors,
     collections,
-    createdAt: getCreatedAt({ attributes, stats }),
+    publishDate,
     draft,
     html: toHTML({ markdown }),
     markdown,
-    slug: getSlug({ filePath, fmData }),
+    slug: getSlug({
+      filePath,
+      attributes: { ...fmData.attributes, publishDate },
+      type
+    }),
     tags,
     title,
     type,
-    updatedAt: getUpdatedAt({ attributes, stats }),
   };
 };

@@ -1,6 +1,6 @@
 {
+  "extends": "@tsconfig/node16/tsconfig.json",
   "compilerOptions": {
-    "module": "CommonJS",
     "sourceMap": true,
     "outDir": "lib",
     "lib": [
