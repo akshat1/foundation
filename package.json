@@ -1,9 +1,9 @@
 {
-  "name": "foundation",
+  "name": "@akshat1/patrika",
   "version": "1.0.0",
   "description": "An API to serve content stored in markdown files on disk. Intended to serve as the data layer for lightweight static site generators such as Pequeno.",
   "main": "lib/index.js",
-  "repository": "git@github.com:akshat1/foundation.git",
+  "repository": "git@github.com:akshat1/patrika.git",
   "author": "akshat1 <akshat.sh@gmail.com>",
   "license": "MIT",
   "scripts": {

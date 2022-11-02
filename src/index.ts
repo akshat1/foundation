@@ -1,18 +1,20 @@
 import ContentItem, { ContentItemType, toContentItem } from "./ContentItem";
 import { promises as fs, stat } from "fs";
 import { promisify } from "util";
-import glob from "glob";
+import callbackGlob from "glob";
 import frontmatter from "front-matter";
 import { GetSlug, ToHTML } from "./typedefs";
 
-export interface Foundation {
+const glob = promisify(callbackGlob);
+
+export interface Patrika {
   getAll: (GetCollectionArgs) => ContentItem[];
   getPages: (GetCollectionArgs) => ContentItem[];
   getPosts: (GetCollectionArgs) => ContentItem[];
   getTags: (GetCollectionArgs) => string[];
 }
 
-export interface GetFoundationArgs {
+export interface GetPatrikaArgs {
   postsGlob: string;
   pagesGlob: string;
   /**
@@ -37,18 +39,18 @@ export interface GetFoundationArgs {
  * 
  * module.exports = async () => {
  *  // in real usage you'd usually want to cache the instance and use it in all your data files.
- *  const foundation = await getFoundation({
+ *  const patrika = await getPatrika({
  *    pagesGlob: path.join("content", "pages", "**", "*.md"),
  *    postsGlob: path.join("content", "posts", "**", "*.md"),
  *    getSlug: ({ filePath, fmData }) => fmData.attributes.title || slugify(path.basename(filePath).replace(/\.md$/, "")),
  *    toHTML: ({ markdown }) => marked(markdown),
  *  });
  * 
- *  return foundation.getPages();
+ *  return patrika.getPages();
  * };
  * ```
  */
-export async function getFoundation (args: GetFoundationArgs): Promise<Foundation> {
+export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
   const {
     postsGlob,
     pagesGlob,
