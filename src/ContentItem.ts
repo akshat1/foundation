@@ -1,7 +1,6 @@
 import { FrontMatterResult } from "front-matter";
 import { Stats } from "fs";
-import { FrontMatterAttributes } from "./FrontMatterAttributes";
-import { ToHTML } from "./typedefs";
+import { FrontMatterAttributes } from "./front-matter";
 import { GetSlug } from "./typedefs";
 
 export enum ContentItemType {
@@ -14,7 +13,6 @@ export default interface ContentItem {
   collections: string[];
   publishDate: string|null; // Date
   draft: boolean;
-  html: string;
   markdown: string;
   slug: string;
   tags: string[];
@@ -22,6 +20,7 @@ export default interface ContentItem {
   type: ContentItemType;
 };
 
+// TODO: Now that we are enforcing the schema and publishedDate as a required field, we stop looking at FS.Stats
 const getPublishDate = (args: { attributes: Record<string, any>, stats: Stats }): string|null => {
   const strDate = args.attributes?.publishDate || args.stats.ctime;
   if (strDate) {
@@ -34,7 +33,6 @@ const getPublishDate = (args: { attributes: Record<string, any>, stats: Stats })
 
 export interface ToContentItemArgs {
   fmData: FrontMatterResult<FrontMatterAttributes>,
-  toHTML: ToHTML,
   getSlug: GetSlug,
   filePath: string,
   stats: Stats,
@@ -47,7 +45,6 @@ export const toContentItem = (args: ToContentItemArgs): ContentItem => {
     fmData,
     getSlug,
     stats,
-    toHTML,
     type,
   } = args;
 
@@ -71,7 +68,6 @@ export const toContentItem = (args: ToContentItemArgs): ContentItem => {
     collections,
     publishDate,
     draft,
-    html: toHTML({ markdown }),
     markdown,
     slug: getSlug({
       filePath,

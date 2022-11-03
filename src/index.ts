@@ -2,9 +2,8 @@ import ContentItem, { ContentItemType, toContentItem } from "./ContentItem";
 import { promises as fs, stat } from "fs";
 import { promisify } from "util";
 import { glob as callbackGlob } from "glob";
-import frontmatter from "front-matter";
-import { GetSlug, ToHTML } from "./typedefs";
-import { FrontMatterAttributes } from "./FrontMatterAttributes";
+import { GetSlug } from "./typedefs";
+import { FrontMatterAttributes, getFMData } from "./front-matter";
 
 export {
   ContentItemType,
@@ -25,12 +24,6 @@ export interface GetPatrikaArgs {
   postsGlob: string;
   pagesGlob: string;
   /**
-   * Given markdown, return HTML.
-   * This is a an argument here so that clients may supply their own markdown parser, which enables
-   * use of custom markdown extensions.
-   */
-  toHTML: ToHTML;
-  /**
    * Letting clients supply this function lets client set their own slugification.
    */
   getSlug: GetSlug;
@@ -40,7 +33,6 @@ export interface GetPatrikaArgs {
  * @example
  * ```
  * // Example usage with Pequeno for one of the data files.
- * const { marked } = require("marked");
  * const slugify = require("slugify");
  * const path = require("path");
  * 
@@ -50,7 +42,6 @@ export interface GetPatrikaArgs {
  *    pagesGlob: path.join("content", "pages", "**", "*.md"),
  *    postsGlob: path.join("content", "posts", "**", "*.md"),
  *    getSlug: ({ filePath, fmData }) => fmData.attributes.title || slugify(path.basename(filePath).replace(/\.md$/, "")),
- *    toHTML: ({ markdown }) => marked(markdown),
  *  });
  * 
  *  return patrika.getPages();
@@ -61,7 +52,6 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
   const {
     postsGlob,
     pagesGlob,
-    toHTML,
     getSlug,
   } = args;
 
@@ -77,13 +67,12 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
       }
 
       const markdown = (await fs.readFile(filePath)).toString();
-      const fmData = frontmatter<FrontMatterAttributes>(markdown);
+      const fmData = getFMData({ markdown, filePath });
       const item = toContentItem({
         filePath,
         stats,
         fmData,
         getSlug,
-        toHTML,
         type,
       });
 

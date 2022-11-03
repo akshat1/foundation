@@ -1,7 +1,5 @@
 import { ContentItemType } from "./ContentItem";
-import { FrontMatterAttributes } from "./FrontMatterAttributes";
-
-export type ToHTML = (args: { markdown: string }) => string;
+import { FrontMatterAttributes } from "./front-matter";
 
 interface GetSlugArgs {
   filePath: string;
