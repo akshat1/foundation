@@ -11,9 +11,11 @@ export enum ContentItemType {
 export default interface ContentItem {
   authors: string[];
   collections: string[];
-  publishDate: string|null; // Date
   draft: boolean;
+  id: string;
   markdown: string;
+  body?: string;
+  publishDate: string|null; // Date
   slug: string;
   tags: string[];
   title: string;
@@ -57,6 +59,7 @@ export const toContentItem = (args: ToContentItemArgs): ContentItem => {
     authors = [],
     collections = [],
     draft = false,
+    id,
     tags = [],
     title,
   } = attributes;
@@ -68,6 +71,7 @@ export const toContentItem = (args: ToContentItemArgs): ContentItem => {
     collections,
     publishDate,
     draft,
+    id,
     markdown,
     slug: getSlug({
       filePath,
