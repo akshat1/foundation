@@ -2,8 +2,9 @@ import ContentItem, { ContentItemType, toContentItem } from "./ContentItem";
 import { promises as fs, stat } from "fs";
 import { promisify } from "util";
 import { glob as callbackGlob } from "glob";
-import { GetSlug } from "./typedefs";
+import { GetSlug, Patrika } from "./typedefs";
 import { FrontMatterAttributes, getFMData } from "./front-matter";
+import { renderAllMarkdown } from "./markdown";
 
 export {
   ContentItemType,
@@ -12,13 +13,6 @@ export {
 };
 
 const glob = promisify(callbackGlob);
-
-export interface Patrika {
-  getAll(): ContentItem[];
-  getPages(): ContentItem[];
-  getPosts(): ContentItem[];
-  getTags(): string[];
-}
 
 export interface GetPatrikaArgs {
   postsGlob: string;
@@ -56,6 +50,7 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
   } = args;
 
   const tagsMap = new Map<string, ContentItem[]>;
+  const idMap = new Map<string, ContentItem>;
 
   const fileWalker = async (globPattern: string, type: ContentItemType): Promise<ContentItem[]> => {
     const filePaths = await glob(globPattern);
@@ -85,6 +80,8 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
         /// @ts-ignore We KNOW the result of this get is a string[] because the previous code block ensures that.
         tagsMap.get(tag).push(item);
       }
+
+      idMap.set(item.id, item);
     }
 
     return items;
@@ -93,10 +90,16 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
   const pages = await fileWalker(pagesGlob, ContentItemType.Page);
   const posts = await fileWalker(postsGlob, ContentItemType.Post);
 
-  return {
+  const patrika = {
     getAll: () => [...pages, ...posts],
+    getById: (id: string) => idMap.get(id),
     getPages: () => pages,
     getPosts: () => posts,
     getTags: () => Array.from(tagsMap.keys()),
   };
+
+  // Render all markdown.
+  await renderAllMarkdown(patrika);
+
+  return patrika;
 }
