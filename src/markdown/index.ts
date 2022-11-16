@@ -2,6 +2,7 @@ import { marked } from "marked";
 import { Patrika } from "../typedefs";
 import { getExtensions } from "./extensions";
 import { GetPostData } from "./extensions/typedefs";
+import { getPictureData } from "./getPictureData";
 
 /**
  * We render markdown separately from constructing the ContentItem collections, because we have
@@ -22,6 +23,7 @@ export const renderAllMarkdown = async (patrika: Patrika): Promise<void> => {
 
   marked.use(...getExtensions({
     getPostData,
+    getPictureData,
   }));
 
   for (const item of patrika.getAll()) {
