@@ -1,6 +1,6 @@
 /**
  * @module postData
- * @description Identifies PostData short-code, which inline renders some data from another post; used as `[PostData property="foo" post="bar"]`. Where bar is a post-identifier.
+ * @description Implements PostData short-code, which inline renders some data from another post; used as `[PostData property="foo" post="bar"]`. Where bar is a post-identifier.
  */
 import { marked } from "marked";
 import { GetPostData } from "../typedefs";
