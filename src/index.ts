@@ -5,6 +5,7 @@ import { glob as callbackGlob } from "glob";
 import { GetSlug, Patrika } from "./typedefs";
 import { FrontMatterAttributes, getFMData } from "./front-matter";
 import { renderAllMarkdown } from "./markdown";
+import { GetPictureData } from "./markdown/extensions/typedefs";
 
 export {
   ContentItemType,
@@ -21,6 +22,12 @@ export interface GetPatrikaArgs {
    * Letting clients supply this function lets client set their own slugification.
    */
   getSlug: GetSlug;
+  /**
+   * given an imgsrc (as specified in markdown), provide a dictionary of breakpoints
+   * and the corresponding image URL. These breakpoints and URLs will be used to
+   * populate a Picture element.
+   */
+  getPictureData: GetPictureData;
 }
 
 /**
@@ -36,6 +43,7 @@ export interface GetPatrikaArgs {
  *    pagesGlob: path.join("content", "pages", "**", "*.md"),
  *    postsGlob: path.join("content", "posts", "**", "*.md"),
  *    getSlug: ({ filePath, fmData }) => fmData.attributes.title || slugify(path.basename(filePath).replace(/\.md$/, "")),
+ *    getPictureData: (imgSrc) => ({ "(max-width: 799px)": "small.jpg", "(min-width: 800px)": "large.jpg", }),
  *  });
  * 
  *  return patrika.getPages();
@@ -47,6 +55,7 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
     postsGlob,
     pagesGlob,
     getSlug,
+    getPictureData,
   } = args;
 
   const tagsMap = new Map<string, ContentItem[]>;
@@ -99,7 +108,10 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
   };
 
   // Render all markdown.
-  await renderAllMarkdown(patrika);
+  await renderAllMarkdown({
+    patrika,
+    getPictureData,
+  });
 
   return patrika;
 }
