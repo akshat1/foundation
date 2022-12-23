@@ -8,6 +8,7 @@ export interface FrontMatterAttributes {
   tags?: string[];
   title: string;
   publishDate: string | null;
+  excerpt?: string;
 }
 
 const DatePattern = /\d{4}-\d{2}-\d{2}/;

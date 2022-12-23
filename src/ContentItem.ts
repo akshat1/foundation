@@ -14,7 +14,9 @@ export default interface ContentItem {
   draft: boolean;
   id: string;
   markdown: string;
+  excerptMarkdown?: string;
   body?: string;
+  excerpt?: string;
   publishDate: string|null; // Date
   slug: string;
   tags: string[];
@@ -22,7 +24,6 @@ export default interface ContentItem {
   type: ContentItemType;
 };
 
-// TODO: Now that we are enforcing the schema and publishedDate as a required field, we stop looking at FS.Stats
 const getPublishDate = (args: { attributes: Record<string, any>, stats: Stats }): string|null => {
   const strDate = args.attributes?.publishDate || args.stats.ctime;
   if (strDate) {
@@ -62,6 +63,7 @@ export const toContentItem = (args: ToContentItemArgs): ContentItem => {
     id,
     tags = [],
     title,
+    excerpt,
   } = attributes;
 
   const publishDate = getPublishDate({ attributes, stats });
@@ -73,6 +75,7 @@ export const toContentItem = (args: ToContentItemArgs): ContentItem => {
     draft,
     id,
     markdown,
+    excerptMarkdown: excerpt,
     slug: getSlug({
       filePath,
       attributes: { ...fmData.attributes, publishDate },

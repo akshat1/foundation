@@ -99,12 +99,21 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
   const pages = await fileWalker(pagesGlob, ContentItemType.Page);
   const posts = await fileWalker(postsGlob, ContentItemType.Post);
 
+  // posts should be reverse chronologically sorted.
+  posts.sort((a: ContentItem, b: ContentItem): number => {
+    /// @ts-ignore
+    const dA = new Date(a.publishDate).getTime();
+    /// @ts-ignore
+    const dB = new Date(b.publishDate).getTime();
+    return dB - dA;
+  });
+
   const patrika = {
     getAll: () => [...pages, ...posts],
     getById: (id: string) => idMap.get(id),
     getPages: () => pages,
     getPosts: () => posts,
-    getTags: () => Array.from(tagsMap.keys()),
+    getTags: () => Array.from(tagsMap.keys()).sort(),
   };
 
   // Render all markdown.

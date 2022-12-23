@@ -3,3 +3,4 @@ src/
 .nycrc
 .nyc_output/
 tsconfig.json
+*.tgz

@@ -36,5 +36,8 @@ export const renderAllMarkdown = async (args: RenderAllMarkdownArgs): Promise<vo
 
   for (const item of patrika.getAll()) {
     item.body = await marked(item.markdown);
+    if (item.excerptMarkdown) {
+      item.excerpt = await marked(item.excerptMarkdown);
+    }
   }
 };
