@@ -30,6 +30,14 @@ export interface GetPatrikaArgs {
   getPictureData: GetPictureData;
 }
 
+const comparePostsByPublishedDate = (a: ContentItem, b: ContentItem): number => {
+  /// @ts-ignore
+  const dA = new Date(a.publishDate).getTime();
+  /// @ts-ignore
+  const dB = new Date(b.publishDate).getTime();
+  return dB - dA;
+};
+
 /**
  * @example
  * ```
@@ -58,9 +66,7 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
     getPictureData,
   } = args;
 
-  const tagsMap = new Map<string, ContentItem[]>;
-  const idMap = new Map<string, ContentItem>;
-
+  const idMap:Record<string, ContentItem> = {};
   const fileWalker = async (globPattern: string, type: ContentItemType): Promise<ContentItem[]> => {
     const filePaths = await glob(globPattern);
     const items = [];
@@ -81,16 +87,7 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
       });
 
       items.push(item);
-      for (const tag of item.tags) {
-        if (!tagsMap.has(tag)) {
-          tagsMap.set(tag, []);
-        }
-
-        /// @ts-ignore We KNOW the result of this get is a string[] because the previous code block ensures that.
-        tagsMap.get(tag).push(item);
-      }
-
-      idMap.set(item.id, item);
+      idMap[item.id] = item;
     }
 
     return items;
@@ -98,22 +95,31 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
 
   const pages = await fileWalker(pagesGlob, ContentItemType.Page);
   const posts = await fileWalker(postsGlob, ContentItemType.Post);
-
   // posts should be reverse chronologically sorted.
-  posts.sort((a: ContentItem, b: ContentItem): number => {
-    /// @ts-ignore
-    const dA = new Date(a.publishDate).getTime();
-    /// @ts-ignore
-    const dB = new Date(b.publishDate).getTime();
-    return dB - dA;
+  posts.sort(comparePostsByPublishedDate);
+
+  // Construct a map of tags to posts
+  // We sorted posts before this step so that when we look up posts by tag, they are pre-sorted.
+  const tagsMap: Record<string, ContentItem[]> = {};
+  posts.forEach((post) => {
+    for (const tag of post.tags) {
+      if (!tagsMap[tag]) {
+        tagsMap[tag] = [];
+      }
+  
+      /// @ts-ignore We KNOW the result of this get is a string[] because the previous code block ensures that.
+      tagsMap[tag].push(post);
+    }
   });
 
-  const patrika = {
+  const patrika: Patrika = {
     getAll: () => [...pages, ...posts],
-    getById: (id: string) => idMap.get(id),
+    getById: (id: string) => idMap[id],
     getPages: () => pages,
     getPosts: () => posts,
-    getTags: () => Array.from(tagsMap.keys()).sort(),
+    getTags: () => tagsMap,
+    /// @ts-ignore Doing a `?? []` here would potentially hide bugs in case something changes between populating and delivering map values.
+    getPostsForTag: (tag: string) => tagsMap.get(tag),
   };
 
   // Render all markdown.

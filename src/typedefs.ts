@@ -13,5 +13,5 @@ export interface Patrika {
   getById(id: string): ContentItem|undefined;
   getPages(): ContentItem[];
   getPosts(): ContentItem[];
-  getTags(): string[];
+  getTags(): Record<string, ContentItem[]>;
 }
