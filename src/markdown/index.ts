@@ -1,11 +1,12 @@
 import { marked } from "marked";
-import { Patrika } from "../typedefs";
+import { Patrika, PostProcessHTML } from "../typedefs";
 import { getExtensions } from "./extensions";
-import { GetPictureData, GetPostData } from "./extensions/typedefs";
+import { GetPostData } from "./extensions/typedefs";
+import { JSDOM } from "jsdom";
 
 interface RenderAllMarkdownArgs {
   patrika: Patrika;
-  getPictureData: GetPictureData,
+  postProcessHTML?: PostProcessHTML;
 }
 
 /**
@@ -17,7 +18,7 @@ interface RenderAllMarkdownArgs {
 export const renderAllMarkdown = async (args: RenderAllMarkdownArgs): Promise<void> => {
   const {
     patrika,
-    getPictureData,
+    postProcessHTML,
   } = args;
   const getPostData: GetPostData = ({ post, property }) => {
     if (post && property) {
@@ -29,15 +30,20 @@ export const renderAllMarkdown = async (args: RenderAllMarkdownArgs): Promise<vo
     };
   }
 
-  marked.use(...getExtensions({
-    getPostData,
-    getPictureData,
-  }));
+  marked.use(...getExtensions({ getPostData }));
 
   for (const item of patrika.getAll()) {
     item.body = await marked(item.markdown);
     if (item.excerptMarkdown) {
       item.excerpt = await marked(item.excerptMarkdown);
+    }
+
+    if (typeof postProcessHTML === "function") {
+      postProcessHTML({
+        body: new JSDOM(item.body).window.document.documentElement,
+        excerpt: item.excerpt ? new JSDOM(item.excerpt).window.document.documentElement : undefined,
+        item,
+      });
     }
   }
 };

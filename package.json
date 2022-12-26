@@ -1,6 +1,6 @@
 {
   "name": "@akshat1/patrika",
-  "version": "0.2.0-alpha",
+  "version": "0.2.0",
   "description": "An API to serve content stored in markdown files on disk. Intended to serve as the data layer for lightweight static site generators such as Pequeno.",
   "main": "lib/index.js",
   "repository": "git@github.com:akshat1/patrika.git",
@@ -29,8 +29,10 @@
     "typescript": "^4.8.4"
   },
   "dependencies": {
+    "@types/jsdom": "^20.0.1",
     "front-matter": "^4.0.2",
     "glob": "^8.0.3",
+    "jsdom": "^20.0.3",
     "marked": "^4.2.2"
   }
 }

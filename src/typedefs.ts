@@ -7,6 +7,7 @@ interface GetSlugArgs {
   type: ContentItemType;
 };
 export type GetSlug = (args: GetSlugArgs) => string;
+export type PostProcessHTML = (args: { body: HTMLElement, item: ContentItem, excerpt?: HTMLElement }) => HTMLElement;
 
 export interface Patrika {
   getAll(): ContentItem[];

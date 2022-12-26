@@ -10,18 +10,21 @@ export enum ContentItemType {
 
 export default interface ContentItem {
   authors: string[];
+  body?: string;
   collections: string[];
   draft: boolean;
-  id: string;
-  markdown: string;
-  excerptMarkdown?: string;
-  body?: string;
   excerpt?: string;
+  excerptMarkdown?: string;
+  id: string;
+  image?: string;
+  imgAlt?: string;
+  markdown: string;
   publishDate: string|null; // Date
   slug: string;
   tags: string[];
   title: string;
   type: ContentItemType;
+  frontMatter: Record<string, any>;
 };
 
 const getPublishDate = (args: { attributes: Record<string, any>, stats: Stats }): string|null => {
@@ -60,10 +63,12 @@ export const toContentItem = (args: ToContentItemArgs): ContentItem => {
     authors = [],
     collections = [],
     draft = false,
+    excerpt,
     id,
+    image,
+    imgAlt,
     tags = [],
     title,
-    excerpt,
   } = attributes;
 
   const publishDate = getPublishDate({ attributes, stats });
@@ -73,9 +78,12 @@ export const toContentItem = (args: ToContentItemArgs): ContentItem => {
     collections,
     publishDate,
     draft,
+    frontMatter: attributes,
     id,
     markdown,
     excerptMarkdown: excerpt,
+    image,
+    imgAlt,
     slug: getSlug({
       filePath,
       attributes: { ...fmData.attributes, publishDate },
