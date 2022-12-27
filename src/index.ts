@@ -5,6 +5,7 @@ import { glob as callbackGlob } from "glob";
 import { GetSlug, Patrika, PostProcessHTML } from "./typedefs";
 import { FrontMatterAttributes, getFMData } from "./front-matter";
 import { renderAllMarkdown } from "./markdown";
+import { comparePostsByPublishedDate } from "./util";
 
 export {
   ContentItemType,
@@ -23,14 +24,6 @@ export interface GetPatrikaArgs {
   getSlug: GetSlug;
   postProcessHTML?: PostProcessHTML;
 }
-
-const comparePostsByPublishedDate = (a: ContentItem, b: ContentItem): number => {
-  /// @ts-ignore
-  const dA = new Date(a.publishDate).getTime();
-  /// @ts-ignore
-  const dB = new Date(b.publishDate).getTime();
-  return dB - dA;
-};
 
 /**
  * @example

@@ -94,3 +94,12 @@ export const toContentItem = (args: ToContentItemArgs): ContentItem => {
     type,
   };
 };
+
+export const comparePostsByPublishedDate = (a: ContentItem, b: ContentItem): number => {
+  /// @ts-ignore
+  const dA = new Date(a.publishDate).getTime();
+  /// @ts-ignore
+  const dB = new Date(b.publishDate).getTime();
+  return dB - dA;
+};
+
