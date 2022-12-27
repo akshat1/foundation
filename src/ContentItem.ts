@@ -27,7 +27,15 @@ export default interface ContentItem {
   frontMatter: Record<string, any>;
 };
 
-const getPublishDate = (args: { attributes: Record<string, any>, stats: Stats }): string|null => {
+export const comparePostsByPublishedDate = (a: ContentItem, b: ContentItem): number => {
+  /// @ts-ignore
+  const dA = new Date(a.publishDate).getTime();
+  /// @ts-ignore
+  const dB = new Date(b.publishDate).getTime();
+  return dB - dA;
+};
+
+export const getPublishDate = (args: { attributes: Record<string, any>, stats: Stats }): string|null => {
   const strDate = args.attributes?.publishDate || args.stats.ctime;
   if (strDate) {
     const date = new Date(strDate);
@@ -94,12 +102,3 @@ export const toContentItem = (args: ToContentItemArgs): ContentItem => {
     type,
   };
 };
-
-export const comparePostsByPublishedDate = (a: ContentItem, b: ContentItem): number => {
-  /// @ts-ignore
-  const dA = new Date(a.publishDate).getTime();
-  /// @ts-ignore
-  const dB = new Date(b.publishDate).getTime();
-  return dB - dA;
-};
-
