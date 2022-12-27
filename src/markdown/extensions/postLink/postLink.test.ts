@@ -1,6 +1,6 @@
 import { getPostLinkExtension, PostLinkToken } from ".";
-import { marked } from "marked";
 import * as assert from "assert";
+import { marked } from "marked";
 import sinon from "sinon";
 
 describe("PostLink", async () => {
@@ -16,7 +16,7 @@ describe("PostLink", async () => {
     /// @ts-ignore
     const { tokenizer } = extension.extensions[0];
     it("identifies a well formed usage of the tag.", () => {
-      const src = `[PostLink post="foo" text="bar"]`;
+      const src = "[PostLink post=\"foo\" text=\"bar\"]";
       const token: PostLinkToken = tokenizer(src);
       assert.deepEqual(token, {
         type: "PostLink",
@@ -27,7 +27,7 @@ describe("PostLink", async () => {
     });
 
     it("identifies a well formed usage of the tag with a title", () => {
-      const src = `[PostLink post="foo" text="bar" title="baz"]`;
+      const src = "[PostLink post=\"foo\" text=\"bar\" title=\"baz\"]";
       const token: PostLinkToken = tokenizer(src);
       assert.deepEqual(token, {
         type: "PostLink",
@@ -47,11 +47,11 @@ describe("PostLink", async () => {
       const actual = renderer({
         type: "PostLink",
         post: "foo",
-        text: "bar"
+        text: "bar",
       });
 
       assert.equal(getPostData.callCount, 1);
-      assert.equal(`<a href="https://www.site.com/post/url">bar</a>`, actual);
+      assert.equal("<a href=\"https://www.site.com/post/url\">bar</a>", actual);
     });
 
     it("renders the hyperlink with a title given a well formed token.", () => {
@@ -64,7 +64,7 @@ describe("PostLink", async () => {
       });
 
       assert.equal(getPostData.callCount, 1);
-      assert.equal(`<a href="https://www.site.com/post/url" title="baz">bar</a>`, actual);
+      assert.equal("<a href=\"https://www.site.com/post/url\" title=\"baz\">bar</a>", actual);
     });
   });
 
@@ -72,15 +72,15 @@ describe("PostLink", async () => {
     marked.use(extension);
     it("renders a simple link", async () => {
       assert.equal(
-        await marked('[PostLink post="foo" text="My HyperLink Text"]'),
-        `<p><a href="https://www.site.com/post/url">My HyperLink Text</a></p>\n`,
+        await marked("[PostLink post=\"foo\" text=\"My HyperLink Text\"]"),
+        "<p><a href=\"https://www.site.com/post/url\">My HyperLink Text</a></p>\n",
       );
     });
 
     it("renders a link with a title", async () => {
       assert.equal(
-        await marked('[PostLink post="foo" text="My HyperLink Text" title="blah"]'),
-        `<p><a href="https://www.site.com/post/url" title="blah">My HyperLink Text</a></p>\n`,
+        await marked("[PostLink post=\"foo\" text=\"My HyperLink Text\" title=\"blah\"]"),
+        "<p><a href=\"https://www.site.com/post/url\" title=\"blah\">My HyperLink Text</a></p>\n",
       );
     });
   });

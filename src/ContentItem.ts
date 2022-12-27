@@ -1,14 +1,14 @@
-import { FrontMatterResult } from "front-matter";
-import { Stats } from "fs";
 import { FrontMatterAttributes } from "./front-matter";
 import { GetSlug } from "./typedefs";
+import { FrontMatterResult } from "front-matter";
+import { Stats } from "fs";
 
 export enum ContentItemType {
   Page = "page",
   Post = "post",
-};
+}
 
-export default interface ContentItem {
+export interface ContentItem {
   authors: string[];
   body?: string;
   collections: string[];
@@ -25,7 +25,7 @@ export default interface ContentItem {
   title: string;
   type: ContentItemType;
   frontMatter: Record<string, any>;
-};
+}
 
 export const comparePostsByPublishedDate = (a: ContentItem, b: ContentItem): number => {
   /// @ts-ignore
@@ -95,7 +95,7 @@ export const toContentItem = (args: ToContentItemArgs): ContentItem => {
     slug: getSlug({
       filePath,
       attributes: { ...fmData.attributes, publishDate },
-      type
+      type,
     }),
     tags,
     title,

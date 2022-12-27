@@ -1,8 +1,8 @@
-import assert from "assert";
-import { FrontMatterResult } from "front-matter";
-import ContentItem, { ContentItemType, toContentItem, getPublishDate, ToContentItemArgs } from "./ContentItem";
+import { ContentItem, ContentItemType, getPublishDate, toContentItem, ToContentItemArgs } from "./ContentItem";
 import { comparePostsByPublishedDate } from "./ContentItem";
 import { FrontMatterAttributes } from "./front-matter";
+import assert from "assert";
+import { FrontMatterResult } from "front-matter";
 
 describe("ContentItem", () => {
   describe("comparePostsByPublishedDate", () => {

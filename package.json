@@ -7,11 +7,12 @@
   "author": "akshat1 <akshat.sh@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "test": "nyc ts-mocha src/**/*.test.ts",
-    "clean": "rm -rf lib/ coverage/",
-    "prepare": "yarn run clean; yarn run build",
     "build": "tsc",
-    "docs": "typedoc"
+    "clean": "rm -rf lib/ coverage/",
+    "docs": "typedoc",
+    "lint": "eslint . --ext .ts,.tsx",
+    "prepare": "yarn run clean; yarn run build",
+    "test": "nyc ts-mocha src/**/*.test.ts"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
@@ -30,6 +31,13 @@
   },
   "dependencies": {
     "@types/jsdom": "^20.0.1",
+    "@typescript-eslint/eslint-plugin": "^5.47.1",
+    "@typescript-eslint/parser": "^5.47.1",
+    "eslint": "^8.30.0",
+    "eslint-import-resolver-typescript": "^3.5.2",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jest": "^27.1.7",
+    "eslint-plugin-simple-import-sort": "^8.0.0",
     "front-matter": "^4.0.2",
     "glob": "^8.0.3",
     "jsdom": "^20.0.3",

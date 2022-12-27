@@ -1,10 +1,10 @@
-import ContentItem, { ContentItemType, toContentItem, comparePostsByPublishedDate } from "./ContentItem";
-import { promises as fs, stat } from "fs";
-import { promisify } from "util";
-import { glob as callbackGlob } from "glob";
-import { GetSlug, Patrika, PostProcessHTML } from "./typedefs";
+import { comparePostsByPublishedDate,ContentItem, ContentItemType, toContentItem } from "./ContentItem";
 import { FrontMatterAttributes, getFMData } from "./front-matter";
 import { renderAllMarkdown } from "./markdown";
+import { GetSlug, Patrika, PostProcessHTML } from "./typedefs";
+import { promises as fs } from "fs";
+import { glob as callbackGlob } from "glob";
+import { promisify } from "util";
 
 export {
   ContentItemType,
@@ -57,9 +57,9 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
     const items = [];
     for (const filePath of filePaths) {
       const stats = await fs.stat(filePath);
-      if (!stats.isFile()) {
+      if (!stats.isFile()) 
         continue;
-      }
+      
 
       const markdown = (await fs.readFile(filePath)).toString();
       const fmData = getFMData({ markdown, filePath });
@@ -88,9 +88,9 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
   const tagsMap: Record<string, ContentItem[]> = {};
   posts.forEach((post) => {
     for (const tag of post.tags) {
-      if (!tagsMap[tag]) {
+      if (!tagsMap[tag]) 
         tagsMap[tag] = [];
-      }
+      
   
       /// @ts-ignore We KNOW the result of this get is a string[] because the previous code block ensures that.
       tagsMap[tag].push(post);

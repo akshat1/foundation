@@ -1,5 +1,3 @@
-import { FrontMatterResult } from "front-matter";
-
 export interface FrontMatterAttributes {
   // Required attributes. Patrikā will throw an error if one of these is missing.
   authors: string[];
@@ -28,11 +26,11 @@ const FMDataSchema: Schema = {
 
 const doValidate = (schema: Schema, data: Record<string, any>): string[] => {
   const missingFields: string[] = [];
-  for (const key in schema) {
-    if (!schema[key](data)) {
+  for (const key in schema) 
+    if (!schema[key](data)) 
       missingFields.push(key);
-    }
-  }
+    
+  
 
   return missingFields.sort();
 };

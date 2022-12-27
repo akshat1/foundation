@@ -1,8 +1,8 @@
+import { GetPostData } from "../typedefs";
 import { getPostDataExtension } from ".";
+import { strict as assert } from "assert";
 import { promises as fs } from "fs";
 import { marked } from "marked";
-import { strict as assert } from "assert";
-import { GetPostData } from "../typedefs";
 
 const getFixture = async (fixturePath: string): Promise<string> =>
   (await fs.readFile(fixturePath)).toString();
@@ -19,11 +19,11 @@ describe("PostData", () => {
     // Multiple variations of spacing and capitalization for the same property and post.
     // We only accept double quotes (clearly my regexp game is lacking) for now, so no quote variations.
     const sources = [
-      `[PostData property="title" post="post-one"]`,
-      `[PostData property = "title" post = "post-one"]`,
-      `[PostData property="title" post = "post-one"]`,
-      `[PostData property  =      "title" post=   "post-one"]`,
-      `[pOstDatA pRopErty="title" PoSt="post-one"]`,
+      "[PostData property=\"title\" post=\"post-one\"]",
+      "[PostData property = \"title\" post = \"post-one\"]",
+      "[PostData property=\"title\" post = \"post-one\"]",
+      "[PostData property  =      \"title\" post=   \"post-one\"]",
+      "[pOstDatA pRopErty=\"title\" PoSt=\"post-one\"]",
     ];
     const expected = "<p>>post-one:title<</p>\n";
     for (const src of sources)
