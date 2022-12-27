@@ -1,11 +1,10 @@
-import ContentItem, { ContentItemType, toContentItem } from "./ContentItem";
+import ContentItem, { ContentItemType, toContentItem, comparePostsByPublishedDate } from "./ContentItem";
 import { promises as fs, stat } from "fs";
 import { promisify } from "util";
 import { glob as callbackGlob } from "glob";
 import { GetSlug, Patrika, PostProcessHTML } from "./typedefs";
 import { FrontMatterAttributes, getFMData } from "./front-matter";
 import { renderAllMarkdown } from "./markdown";
-import { comparePostsByPublishedDate } from "./util";
 
 export {
   ContentItemType,
