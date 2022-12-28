@@ -25,7 +25,6 @@ export const getPostLinkExtension = (args: GetPostLinkArgs): marked.MarkedExtens
           if (pMatch) {
             const pMatch2 = pMatch.match(propPattern);
             if (pMatch2 && pMatch2[1] && pMatch2[2]) 
-              /// @ts-ignore
               props[pMatch2[1].toLowerCase()] = pMatch2[2];
             
           }

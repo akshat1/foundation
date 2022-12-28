@@ -50,7 +50,7 @@ describe("ContentItem", () => {
         attributes: { publishDate: "2020-03-02" },
         stats: { ctime: new Date("2021-01-01").toUTCString() },
       };
-      /// @ts-ignore Not going to create a full fs.Stats object for the test :-|
+      /// @ts-expect-error Not going to create a full fs.Stats object for the test :-|
       const actualDate = getPublishDate(args);
       assert.equal(actualDate, "2020-03-02");
     });
@@ -60,7 +60,7 @@ describe("ContentItem", () => {
         attributes: {},
         stats: { ctime: new Date("2021-01-01").toUTCString() },
       };
-      /// @ts-ignore Not going to create a full fs.Stats object for the test :-|
+      /// @ts-expect-error Not going to create a full fs.Stats object for the test :-|
       const actualDate = getPublishDate(args);
       assert.equal(actualDate, "2021-01-01");
     });
@@ -70,7 +70,7 @@ describe("ContentItem", () => {
         attributes: {},
         stats: {},
       };
-      /// @ts-ignore Not going to create a full fs.Stats object for the test :-|
+      /// @ts-expect-error Not going to create a full fs.Stats object for the test :-|
       const actualDate = getPublishDate(args);
       assert.equal(actualDate, null);
     });
@@ -109,7 +109,7 @@ describe("ContentItem", () => {
         filePath: "foo/bar/baz.md",
         fmData: frontMatter,
         getSlug: () => "jabba-the-hut",
-        /// @ts-ignore We don't want to create an entire fs.Stat object.
+        /// @ts-expect-error We don't want to create an entire fs.Stat object.
         stats: {},
       };
 

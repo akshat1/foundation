@@ -90,9 +90,7 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
     for (const tag of post.tags) {
       if (!tagsMap[tag]) 
         tagsMap[tag] = [];
-      
-  
-      /// @ts-ignore We KNOW the result of this get is a string[] because the previous code block ensures that.
+
       tagsMap[tag].push(post);
     }
   });
@@ -103,7 +101,7 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
     getPages: () => pages,
     getPosts: () => posts,
     getTags: () => tagsMap,
-    /// @ts-ignore Doing a `?? []` here would potentially hide bugs in case something changes between populating and delivering map values.
+    /// @ts-expect-error Doing a `?? []` here would potentially hide bugs in case something changes between populating and delivering map values.
     getPostsForTag: (tag: string) => tagsMap.get(tag),
   };
 

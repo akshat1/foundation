@@ -31,7 +31,7 @@ export const getPostDataExtension = (args: GetPostDataExtensionArgs): marked.Mar
           if (pMatch) {
             const pMatch2 = pMatch.match(propPattern);
             if (pMatch2 && pMatch2[1] && pMatch2[2]) 
-              /// @ts-ignore
+              /// @ts-expect-error
               props[pMatch2[1].toLowerCase()] = pMatch2[2];
             
           }

@@ -24,7 +24,7 @@ export const renderAllMarkdown = async (args: RenderAllMarkdownArgs): Promise<vo
     if (post && property) {
       const item = patrika.getById(post);
       if (item) 
-        /// @ts-ignore X-(
+        /// @ts-expect-error X-(
         return item[property];
       
     }

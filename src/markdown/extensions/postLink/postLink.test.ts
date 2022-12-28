@@ -12,7 +12,7 @@ describe("PostLink", () => {
   const extension = getPostLinkExtension({ getPostData });
 
   describe("tokenizer", () => {
-    /// @ts-ignore
+    /// @ts-expect-error
     const { tokenizer } = extension.extensions[0];
     it("identifies a well formed usage of the tag.", () => {
       const src = "[PostLink post=\"foo\" text=\"bar\"]";
@@ -39,7 +39,7 @@ describe("PostLink", () => {
   });
 
   describe("renderer", () => {
-    /// @ts-ignore
+    /// @ts-expect-error
     const { renderer } = extension.extensions[0];
     it("renders the hyperlink given a well formed token.", () => {
       getPostData.mockClear();

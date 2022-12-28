@@ -28,9 +28,9 @@ export interface ContentItem {
 }
 
 export const comparePostsByPublishedDate = (a: ContentItem, b: ContentItem): number => {
-  /// @ts-ignore
+  /// @ts-expect-error
   const dA = new Date(a.publishDate).getTime();
-  /// @ts-ignore
+  /// @ts-expect-error
   const dB = new Date(b.publishDate).getTime();
   return dB - dA;
 };
