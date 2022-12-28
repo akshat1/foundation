@@ -1,10 +1,9 @@
 import { getPostLinkExtension, PostLinkToken } from ".";
-import * as assert from "assert";
+import assert from "assert";
 import { marked } from "marked";
-import sinon from "sinon";
 
-describe("PostLink", async () => {
-  const getPostData = sinon.spy(({ post, property }) => {
+describe("PostLink", () => {
+  const getPostData = jest.fn(({ post, property }) => {
     if (property === "slug")
       return "https://www.site.com/post/url";
     return `>${post}:${property}<`;
@@ -43,19 +42,19 @@ describe("PostLink", async () => {
     /// @ts-ignore
     const { renderer } = extension.extensions[0];
     it("renders the hyperlink given a well formed token.", () => {
-      getPostData.resetHistory();
+      getPostData.mockClear();
       const actual = renderer({
         type: "PostLink",
         post: "foo",
         text: "bar",
       });
 
-      assert.equal(getPostData.callCount, 1);
-      assert.equal("<a href=\"https://www.site.com/post/url\">bar</a>", actual);
+      assert.equal(getPostData.mock.calls.length, 1);
+      assert.equal(actual,"<a href=\"https://www.site.com/post/url\">bar</a>");
     });
 
     it("renders the hyperlink with a title given a well formed token.", () => {
-      getPostData.resetHistory();
+      getPostData.mockClear();
       const actual = renderer({
         type: "PostLink",
         post: "foo",
@@ -63,8 +62,8 @@ describe("PostLink", async () => {
         title: "baz",
       });
 
-      assert.equal(getPostData.callCount, 1);
-      assert.equal("<a href=\"https://www.site.com/post/url\" title=\"baz\">bar</a>", actual);
+      assert.equal(getPostData.mock.calls.length, 1);
+      assert.equal(actual, "<a href=\"https://www.site.com/post/url\" title=\"baz\">bar</a>");
     });
   });
 
