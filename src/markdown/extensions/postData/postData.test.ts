@@ -9,8 +9,9 @@ const getFixture = async (fixturePath: string): Promise<string> =>
 
 describe("PostData", () => {
   const getPostData: GetPostData = ({ post, property }) => {
-    if (property === "slug")
+    if (property === "slug") {
       return "https://www.site.com/post/url";
+    }
     return `>${post}:${property}<`;
   }
   marked.use(getPostDataExtension({ getPostData }));
@@ -26,8 +27,9 @@ describe("PostData", () => {
       "[pOstDatA pRopErty=\"title\" PoSt=\"post-one\"]",
     ];
     const expected = "<p>>post-one:title<</p>\n";
-    for (const src of sources)
+    for (const src of sources) {
       assert.equal(await marked(src), expected);
+    }
   });
 
   it("works with other text", async () => {

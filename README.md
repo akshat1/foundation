@@ -63,64 +63,8 @@ The given short-code would output
 
 ### PostData
 
-PostData let's you insert any data from another post's associated FrontMatter. For example, this MarkDown
+PostData let's you insert any data from another post's associated FrontMatter. For example, this MarkDown would insert the value of the authors field from the referred post's FrontMatter data.
 
 ```markdown
 [PostData post="another-post" property="authors"]
-```
-
-Would insert the value of the authors field from the referred post's FrontMatter data.
-
-## Post Processing
-
-Patrikā provides a mechanism for you to alter the generated HTML. This is useful for things like adding code highlights, or TOC generation. To use this feature, supply the optional `postProcessHTML` argument to `getPatrika()`.
-
-```javascript
-const { getPatrika, ContentItemType } = require("@akshat1/patrika");
-const path = require("path");
-const slugify = require("slugify");
-const Prism = require("prismjs");
-const loadLanguages = require("prismjs/components/");
-
-const highlightLangPattern = /^language-(\w+)$/;
-/**
- * @param {Object} args 
- * @param {HTMLElement} args.body
- * @param {ContentItem} args.item
- */
-const postProcessHTML = ({body, item}) => {
-  const codeTags = Array.from(body.querySelectorAll("pre code"));
-  console.log(`\nPost processing ${item.slug}`);
-  codeTags.forEach(tag => {
-    console.log("\n");
-    console.log(tag.innerHTML.substring(0, 30));
-    const matches = tag.className.match(highlightLangPattern);
-    if (matches) {
-      const lang = matches[1];
-      if (lang) {
-        try {
-          console.log("load lang =>", [lang]);
-          loadLanguages([lang]);
-          console.log("loaded language");
-          console.log("highlight...");
-          tag.innerHTML = Prism.highlight(tag.innerHTML, Prism.languages[lang], lang);
-          console.log("done highlighting");
-        } catch (error) {
-          console.error(`Error highlighting ${item.slug}`);
-          console.error(error);
-        }
-      } else {
-        console.log("no lang");
-      }
-    }
-  });
-  item.body = body.outerHTML;
-};
-
-const patrika = await getPatrika({
-  postsGlob: path.join(process.cwd(), "src", "content", "posts", "**", "*.md"),
-  pagesGlob: path.join(process.cwd(), "src", "content", "pages", "**", "*.md"),
-  getSlug: ({ filePath, fmData }) => fmData.attributes.title || slugify(path.basename(filePath).replace(/\.md$/, "")),
-  postProcessHTML,
-});
 ```

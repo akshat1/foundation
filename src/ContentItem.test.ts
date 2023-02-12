@@ -8,8 +8,10 @@ describe("ContentItem", () => {
   describe("comparePostsByPublishedDate", () => {
     const FakeItemStub: ContentItem = {
       authors: [],
+      body: "",
       collections: [],
       draft: false,
+      excerpt: {},
       frontMatter: {},
       id: "",
       markdown: "",
@@ -18,7 +20,6 @@ describe("ContentItem", () => {
       tags: [],
       title: "",
       type: ContentItemType.Post,
-      body: "",
     };
     const makeFakeItem = (publishDate: string): ContentItem => ({
       ...FakeItemStub,
@@ -93,7 +94,6 @@ describe("ContentItem", () => {
         title,
         collections,
         draft: false,
-        excerpt: "ze boa md",
         image,
         imgAlt,
         tags,
@@ -125,9 +125,9 @@ describe("ContentItem", () => {
         tags,
         title,
         type: ContentItemType.Post,
-        excerptMarkdown: "ze boa md",
         image,
         imgAlt,
+        excerpt: {},
       };
       const actualItem = toContentItem(contentItemArgs);
       assert.deepEqual(actualItem, expectedItem);

@@ -20,20 +20,21 @@ export const getPostLinkExtension = (args: GetPostLinkArgs): marked.MarkedExtens
     if (match) {
       const propMatches = match[0].match(propPatternG);
       const props: Record<string, string> = {};
-      if (propMatches) 
+      if (propMatches) {
         propMatches.forEach((pMatch) => {
           if (pMatch) {
             const pMatch2 = pMatch.match(propPattern);
-            if (pMatch2 && pMatch2[1] && pMatch2[2]) 
+            if (pMatch2 && pMatch2[1] && pMatch2[2]) {
               props[pMatch2[1].toLowerCase()] = pMatch2[2];
-            
+            }
           }
         });
+      }
       
 
-      if (!(props.post && props.text)) 
+      if (!(props.post && props.text)) {
         throw new Error(`Missing props from PostLink tag >[PostLink post="${props.post}" text="${props.text}"]<`);
-      
+      }
 
       return {
         ...props,
@@ -59,9 +60,10 @@ export const getPostLinkExtension = (args: GetPostLinkArgs): marked.MarkedExtens
   
       if (url) {
         const attribs = [`href="${url}"`];
-        if (title) 
+        if (title) {
           attribs.push(`title="${title}"`);
-        
+        }
+
         return `<a ${attribs.join(" ")}>${text}</a>`;
       }
     }

@@ -11,9 +11,9 @@ interface GetFMDataArgs {
 export const getFMData = ({ markdown, filePath }: GetFMDataArgs): FrontMatterResult<FrontMatterAttributes> => {
   const fmData = frontmatter<FrontMatterAttributes>(markdown);
   const missingFields = validate(fmData.attributes);
-  if (missingFields.length) 
+  if (missingFields.length) {
     throw new Error(`Missing [${missingFields.join(", ")}] in ${filePath}`);
-  
+  }
 
   return fmData;
 };

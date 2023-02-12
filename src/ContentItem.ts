@@ -13,8 +13,7 @@ export interface ContentItem {
   body?: string;
   collections: string[];
   draft: boolean;
-  excerpt?: string;
-  excerptMarkdown?: string;
+  excerpt: Record<string, string>;
   id: string;
   image?: string;
   imgAlt?: string;
@@ -71,7 +70,6 @@ export const toContentItem = (args: ToContentItemArgs): ContentItem => {
     authors = [],
     collections = [],
     draft = false,
-    excerpt,
     id,
     image,
     imgAlt,
@@ -84,14 +82,14 @@ export const toContentItem = (args: ToContentItemArgs): ContentItem => {
   return {
     authors,
     collections,
-    publishDate,
     draft,
+    excerpt: {},
     frontMatter: attributes,
     id,
-    markdown,
-    excerptMarkdown: excerpt,
     image,
     imgAlt,
+    markdown,
+    publishDate,
     slug: getSlug({
       filePath,
       attributes: { ...fmData.attributes, publishDate },

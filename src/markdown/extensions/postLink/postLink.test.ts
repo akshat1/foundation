@@ -4,8 +4,10 @@ import { marked } from "marked";
 
 describe("PostLink", () => {
   const getPostData = jest.fn(({ post, property }) => {
-    if (property === "slug")
+    if (property === "slug") {
       return "https://www.site.com/post/url";
+    }
+
     return `>${post}:${property}<`;
   });
 

@@ -1,7 +1,7 @@
 import { comparePostsByPublishedDate,ContentItem, ContentItemType, toContentItem } from "./ContentItem";
 import { FrontMatterAttributes, getFMData } from "./front-matter";
 import { renderAllMarkdown } from "./markdown";
-import { GetSlug, Patrika, PostProcessHTML } from "./typedefs";
+import { GetSlug, Patrika } from "./typedefs";
 import { promises as fs } from "fs";
 import { glob as callbackGlob } from "glob";
 import { promisify } from "util";
@@ -21,8 +21,23 @@ export interface GetPatrikaArgs {
    * Letting clients supply this function lets client set their own slugification.
    */
   getSlug: GetSlug;
-  postProcessHTML?: PostProcessHTML;
+  /**
+   * A dictionary to describe excerpt lengths; with the default values being shown here in the example.
+   * @example
+   * {
+   *   large: 600,
+   *   medium: 300,
+   *   small: 150
+   * }
+   */
+  excerpts?: Record<string, number>;
 }
+
+const DefaultExcerpts = {
+  large: 600,
+  medium: 300,
+  small: 150,
+};
 
 /**
  * @example
@@ -48,7 +63,7 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
     postsGlob,
     pagesGlob,
     getSlug,
-    postProcessHTML,
+    excerpts = DefaultExcerpts,
   } = args;
 
   const idMap:Record<string, ContentItem> = {};
@@ -57,8 +72,9 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
     const items = [];
     for (const filePath of filePaths) {
       const stats = await fs.stat(filePath);
-      if (!stats.isFile()) 
+      if (!stats.isFile()) {
         continue;
+      }
       
 
       const markdown = (await fs.readFile(filePath)).toString();
@@ -89,7 +105,7 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
   posts.forEach((post) => {
     for (const tag of post.tags) {
       if (!tagsMap[tag]) 
-        tagsMap[tag] = [];
+        {tagsMap[tag] = [];}
 
       tagsMap[tag].push(post);
     }
@@ -107,8 +123,8 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
 
   // Render all markdown.
   await renderAllMarkdown({
+    excerpts,
     patrika,
-    postProcessHTML,
   });
 
   return patrika;

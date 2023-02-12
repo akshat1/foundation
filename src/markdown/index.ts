@@ -1,12 +1,13 @@
-import { Patrika, PostProcessHTML } from "../typedefs";
+import { Patrika } from "../typedefs";
 import { getExtensions } from "./extensions";
 import { GetPostData } from "./extensions/typedefs";
-import { JSDOM } from "jsdom";
+/// @ts-ignore
+import excerptHTML from "excerpt-html";
 import { marked } from "marked";
 
 interface RenderAllMarkdownArgs {
   patrika: Patrika;
-  postProcessHTML?: PostProcessHTML;
+  excerpts: Record<string, number>;
 }
 
 /**
@@ -18,14 +19,14 @@ interface RenderAllMarkdownArgs {
 export const renderAllMarkdown = async (args: RenderAllMarkdownArgs): Promise<void> => {
   const {
     patrika,
-    postProcessHTML,
+    excerpts,
   } = args;
   const getPostData: GetPostData = ({ post, property }) => {
     if (post && property) {
       const item = patrika.getById(post);
       if (item) 
         /// @ts-expect-error X-(
-        return item[property];
+        {return item[property];}
       
     }
   }
@@ -34,16 +35,11 @@ export const renderAllMarkdown = async (args: RenderAllMarkdownArgs): Promise<vo
 
   for (const item of patrika.getAll()) {
     item.body = await marked(item.markdown);
-    if (item.excerptMarkdown) 
-      item.excerpt = await marked(item.excerptMarkdown);
-    
-
-    if (typeof postProcessHTML === "function") 
-      postProcessHTML({
-        body: new JSDOM(item.body).window.document.documentElement,
-        excerpt: item.excerpt ? new JSDOM(item.excerpt).window.document.documentElement : undefined,
-        item,
+    item.excerpt = {};
+    for (const excerptVariant in excerpts) {
+      item.excerpt[excerptVariant] = excerptHTML(item.body, {
+        pruneLength: excerpts[excerptVariant],
       });
-    
+    }
   }
 };
