@@ -1,9 +1,9 @@
 /**
  * @module postData
- * @description Identifies PostData short-code, which inline renders some data from another post; used as `[PostData property="foo" post="bar"]`. Where bar is a post-identifier.
+ * @description Implements PostData short-code, which inline renders some data from another post; used as `[PostData property="foo" post="bar"]`. Where bar is a post-identifier.
  */
-import { marked } from "marked";
 import { GetPostData } from "../typedefs";
+import { marked } from "marked";
 
 const TokenType = "postData";
 const tagPattern = /^\[postdata [^\]]+\]/i;
@@ -25,13 +25,13 @@ export const getPostDataExtension = (args: GetPostDataExtensionArgs): marked.Mar
     const match = src.match(tagPattern);
     if (match) {
       const propMatches = match[0].match(propPatternG);
-      let props = {};
+      const props = {};
       if (propMatches) {
         propMatches.forEach((pMatch) => {
           if (pMatch) {
             const pMatch2 = pMatch.match(propPattern);
             if (pMatch2 && pMatch2[1] && pMatch2[2]) {
-              /// @ts-ignore
+              /// @ts-expect-error
               props[pMatch2[1].toLowerCase()] = pMatch2[2];
             }
           }

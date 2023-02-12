@@ -1,5 +1,5 @@
-import { marked } from "marked";
 import { GetPostData } from "../typedefs"
+import { marked } from "marked";
 
 const TokenType = "PostLink";
 const tagPattern = /^\[postlink [^\]]+\]/i;
@@ -19,18 +19,18 @@ export const getPostLinkExtension = (args: GetPostLinkArgs): marked.MarkedExtens
     const match = src.match(tagPattern);
     if (match) {
       const propMatches = match[0].match(propPatternG);
-      let props: Record<string, string> = {};
+      const props: Record<string, string> = {};
       if (propMatches) {
         propMatches.forEach((pMatch) => {
           if (pMatch) {
             const pMatch2 = pMatch.match(propPattern);
             if (pMatch2 && pMatch2[1] && pMatch2[2]) {
-              /// @ts-ignore
               props[pMatch2[1].toLowerCase()] = pMatch2[2];
             }
           }
         });
       }
+      
 
       if (!(props.post && props.text)) {
         throw new Error(`Missing props from PostLink tag >[PostLink post="${props.post}" text="${props.text}"]<`);
@@ -63,6 +63,7 @@ export const getPostLinkExtension = (args: GetPostLinkArgs): marked.MarkedExtens
         if (title) {
           attribs.push(`title="${title}"`);
         }
+
         return `<a ${attribs.join(" ")}>${text}</a>`;
       }
     }

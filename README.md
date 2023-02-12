@@ -38,3 +38,33 @@ export interface FrontMatterAttributes {
   publishDate: string | null;
 }
 ```
+
+## Custom short-codes
+
+Patrikā is geared towards Markdown and FrontMatter, and fortunately, the Markdown node package lets us add custom extensions. We use this mechanism to add a few short-codes for convenience. These are entirely optional for you to use, but we find them useful.
+
+### PostLink
+
+PostLink let's you insert a hyperlink to another post without having to know the actual URL of the post/page. You just need to provide the id of the target post, as defined in FrontMatter.
+
+Consider this markdown
+
+```markdown
+[PostLink post="another-post" text="See this other post" title="hyperlink to another post"]
+```
+
+The given short-code would output
+
+```html
+<a href="https://my-site.com/path/to/another-post" title="hyperlink to another post">
+  See this other post
+</a>
+```
+
+### PostData
+
+PostData let's you insert any data from another post's associated FrontMatter. For example, this MarkDown would insert the value of the authors field from the referred post's FrontMatter data.
+
+```markdown
+[PostData post="another-post" property="authors"]
+```

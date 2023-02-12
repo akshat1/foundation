@@ -1,10 +1,10 @@
-import ContentItem, { ContentItemType, toContentItem } from "./ContentItem";
-import { promises as fs, stat } from "fs";
-import { promisify } from "util";
-import { glob as callbackGlob } from "glob";
-import { GetSlug, Patrika } from "./typedefs";
+import { comparePostsByPublishedDate,ContentItem, ContentItemType, toContentItem } from "./ContentItem";
 import { FrontMatterAttributes, getFMData } from "./front-matter";
 import { renderAllMarkdown } from "./markdown";
+import { GetSlug, Patrika } from "./typedefs";
+import { promises as fs } from "fs";
+import { glob as callbackGlob } from "glob";
+import { promisify } from "util";
 
 export {
   ContentItemType,
@@ -21,7 +21,23 @@ export interface GetPatrikaArgs {
    * Letting clients supply this function lets client set their own slugification.
    */
   getSlug: GetSlug;
+  /**
+   * A dictionary to describe excerpt lengths; with the default values being shown here in the example.
+   * @example
+   * {
+   *   large: 600,
+   *   medium: 300,
+   *   small: 150
+   * }
+   */
+  excerpts?: Record<string, number>;
 }
+
+const DefaultExcerpts = {
+  large: 600,
+  medium: 300,
+  small: 150,
+};
 
 /**
  * @example
@@ -47,11 +63,10 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
     postsGlob,
     pagesGlob,
     getSlug,
+    excerpts = DefaultExcerpts,
   } = args;
 
-  const tagsMap = new Map<string, ContentItem[]>;
-  const idMap = new Map<string, ContentItem>;
-
+  const idMap:Record<string, ContentItem> = {};
   const fileWalker = async (globPattern: string, type: ContentItemType): Promise<ContentItem[]> => {
     const filePaths = await glob(globPattern);
     const items = [];
@@ -60,6 +75,7 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
       if (!stats.isFile()) {
         continue;
       }
+      
 
       const markdown = (await fs.readFile(filePath)).toString();
       const fmData = getFMData({ markdown, filePath });
@@ -72,16 +88,7 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
       });
 
       items.push(item);
-      for (const tag of item.tags) {
-        if (!tagsMap.has(tag)) {
-          tagsMap.set(tag, []);
-        }
-
-        /// @ts-ignore We KNOW the result of this get is a string[] because the previous code block ensures that.
-        tagsMap.get(tag).push(item);
-      }
-
-      idMap.set(item.id, item);
+      idMap[item.id] = item;
     }
 
     return items;
@@ -89,17 +96,36 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
 
   const pages = await fileWalker(pagesGlob, ContentItemType.Page);
   const posts = await fileWalker(postsGlob, ContentItemType.Post);
+  // posts should be reverse chronologically sorted.
+  posts.sort(comparePostsByPublishedDate);
 
-  const patrika = {
+  // Construct a map of tags to posts
+  // We sorted posts before this step so that when we look up posts by tag, they are pre-sorted.
+  const tagsMap: Record<string, ContentItem[]> = {};
+  posts.forEach((post) => {
+    for (const tag of post.tags) {
+      if (!tagsMap[tag]) 
+        {tagsMap[tag] = [];}
+
+      tagsMap[tag].push(post);
+    }
+  });
+
+  const patrika: Patrika = {
     getAll: () => [...pages, ...posts],
-    getById: (id: string) => idMap.get(id),
+    getById: (id: string) => idMap[id],
     getPages: () => pages,
     getPosts: () => posts,
-    getTags: () => Array.from(tagsMap.keys()),
+    getTags: () => tagsMap,
+    /// @ts-expect-error Doing a `?? []` here would potentially hide bugs in case something changes between populating and delivering map values.
+    getPostsForTag: (tag: string) => tagsMap.get(tag),
   };
 
   // Render all markdown.
-  await renderAllMarkdown(patrika);
+  await renderAllMarkdown({
+    excerpts,
+    patrika,
+  });
 
   return patrika;
 }

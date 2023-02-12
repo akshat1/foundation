@@ -12,7 +12,7 @@ export const getFMData = ({ markdown, filePath }: GetFMDataArgs): FrontMatterRes
   const fmData = frontmatter<FrontMatterAttributes>(markdown);
   const missingFields = validate(fmData.attributes);
   if (missingFields.length) {
-    throw new Error(`Missing [${missingFields.join(', ')}] in ${filePath}`);
+    throw new Error(`Missing [${missingFields.join(", ")}] in ${filePath}`);
   }
 
   return fmData;

@@ -3,3 +3,6 @@ lib/
 docs/
 .nyc_output/
 coverage/
+# Don't Try to commit packed packages.
+*.tgz
+yarn-error.log

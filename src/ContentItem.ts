@@ -1,29 +1,40 @@
-import { FrontMatterResult } from "front-matter";
-import { Stats } from "fs";
 import { FrontMatterAttributes } from "./front-matter";
 import { GetSlug } from "./typedefs";
+import { FrontMatterResult } from "front-matter";
+import { Stats } from "fs";
 
 export enum ContentItemType {
   Page = "page",
   Post = "post",
-};
+}
 
-export default interface ContentItem {
+export interface ContentItem {
   authors: string[];
+  body?: string;
   collections: string[];
   draft: boolean;
+  excerpt: Record<string, string>;
   id: string;
+  image?: string;
+  imgAlt?: string;
   markdown: string;
-  body?: string;
   publishDate: string|null; // Date
   slug: string;
   tags: string[];
   title: string;
   type: ContentItemType;
+  frontMatter: Record<string, any>;
+}
+
+export const comparePostsByPublishedDate = (a: ContentItem, b: ContentItem): number => {
+  /// @ts-expect-error
+  const dA = new Date(a.publishDate).getTime();
+  /// @ts-expect-error
+  const dB = new Date(b.publishDate).getTime();
+  return dB - dA;
 };
 
-// TODO: Now that we are enforcing the schema and publishedDate as a required field, we stop looking at FS.Stats
-const getPublishDate = (args: { attributes: Record<string, any>, stats: Stats }): string|null => {
+export const getPublishDate = (args: { attributes: Record<string, any>, stats: Stats }): string|null => {
   const strDate = args.attributes?.publishDate || args.stats.ctime;
   if (strDate) {
     const date = new Date(strDate);
@@ -60,6 +71,8 @@ export const toContentItem = (args: ToContentItemArgs): ContentItem => {
     collections = [],
     draft = false,
     id,
+    image,
+    imgAlt,
     tags = [],
     title,
   } = attributes;
@@ -69,14 +82,18 @@ export const toContentItem = (args: ToContentItemArgs): ContentItem => {
   return {
     authors,
     collections,
-    publishDate,
     draft,
+    excerpt: {},
+    frontMatter: attributes,
     id,
+    image,
+    imgAlt,
     markdown,
+    publishDate,
     slug: getSlug({
       filePath,
       attributes: { ...fmData.attributes, publishDate },
-      type
+      type,
     }),
     tags,
     title,

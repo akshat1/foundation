@@ -1,13 +1,17 @@
-import { FrontMatterResult } from "front-matter";
-
 export interface FrontMatterAttributes {
-  id: string;
+  // Required attributes. Patrikā will throw an error if one of these is missing.
   authors: string[];
+  id: string;
+  publishDate: string | null;
+  title: string;
+
+  // Optional attributes. Don't show up in the validation schema object.
   collections?: string[];
   draft?: boolean;
+  excerpt?: string;
+  image?: string;
+  imgAlt?: string;
   tags?: string[];
-  title: string;
-  publishDate: string | null;
 }
 
 const DatePattern = /\d{4}-\d{2}-\d{2}/;
