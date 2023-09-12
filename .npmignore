@@ -1,6 +1,11 @@
-src/
-.vscode/
-.nycrc
+.eslintignore
+.eslintrc.js
 .nyc_output/
-tsconfig.json
+.nycrc
+.vscode/
 *.tgz
+jest.config.js
+src/
+tsconfig.json
+typedoc.json
+yarn-error.log
