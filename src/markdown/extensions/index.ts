@@ -1,10 +1,11 @@
-import { getPostDataExtension, GetPostDataExtensionArgs } from "./postData";
-import { getPostLinkExtension } from "./postLink";
+import { getShortCodeExtension } from "./shortCode";
+import { GetShortCode } from "./typedefs";
 import { marked } from "marked";
 
-type GetExtensionsArgs = GetPostDataExtensionArgs
+interface GetExtensionsArgs {
+  getShortCode: GetShortCode
+}
 
 export const getExtensions = (args: GetExtensionsArgs): marked.MarkedExtension[] => [
-  getPostDataExtension(args),
-  getPostLinkExtension(args),
+  getShortCodeExtension(args),
 ];
