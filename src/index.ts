@@ -1,18 +1,14 @@
-import { comparePostsByPublishedDate,ContentItem, ContentItemType, toContentItem } from "./ContentItem";
-import { FrontMatterAttributes, getFMData } from "./front-matter";
+import { comparePostsByPublishedDate,ContentItem, ContentItemType } from "./ContentItem";
+import { fileWalker } from "./fileWalker";
+import { FrontMatterAttributes } from "./front-matter";
 import { renderAllMarkdown } from "./markdown";
 import { GetSlug, Patrika } from "./typedefs";
-import { promises as fs } from "fs";
-import { glob as callbackGlob } from "glob";
-import { promisify } from "util";
 
 export {
   ContentItemType,
   ContentItem,
   FrontMatterAttributes,
 };
-
-const glob = promisify(callbackGlob);
 
 export interface GetPatrikaArgs {
   postsGlob: string;
@@ -65,37 +61,22 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
     getSlug,
     excerpts = DefaultExcerpts,
   } = args;
-
   const idMap:Record<string, ContentItem> = {};
-  const fileWalker = async (globPattern: string, type: ContentItemType): Promise<ContentItem[]> => {
-    const filePaths = await glob(globPattern);
-    const items = [];
-    for (const filePath of filePaths) {
-      const stats = await fs.stat(filePath);
-      if (!stats.isFile()) {
-        continue;
-      }
-      
 
-      const markdown = (await fs.readFile(filePath)).toString();
-      const fmData = getFMData({ markdown, filePath });
-      const item = toContentItem({
-        filePath,
-        stats,
-        fmData,
-        getSlug,
-        type,
-      });
+  const pages = await fileWalker({
+    globPattern: pagesGlob,
+    type: ContentItemType.Page,
+    getSlug,
+    idMap,
+  });
 
-      items.push(item);
-      idMap[item.id] = item;
-    }
+  const posts = await fileWalker({
+    globPattern: postsGlob,
+    type: ContentItemType.Post,
+    getSlug,
+    idMap,
+  });
 
-    return items;
-  };
-
-  const pages = await fileWalker(pagesGlob, ContentItemType.Page);
-  const posts = await fileWalker(postsGlob, ContentItemType.Post);
   // posts should be reverse chronologically sorted.
   posts.sort(comparePostsByPublishedDate);
 
