@@ -13,5 +13,6 @@ export interface Patrika {
   getById(id: string): Promise<ContentItem|undefined>;
   getPages(): Promise<ContentItem[]>;
   getPosts(): Promise<ContentItem[]>;
+  find: (query: Record<string, any>) => Promise<ContentItem[]>;
   getTags(): Record<string, ContentItem[]>;
 }

@@ -100,6 +100,7 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
     getPages: () => db.find({ type: ContentItemType.Page }).toArray(),
     getPosts: () => db.find({ type: ContentItemType.Post }).toArray(),
     getTags: () => tagsMap,
+    find: (query: Record<string, any>) => db.find(query).toArray(),
     /// @ts-expect-error Doing a `?? []` here would potentially hide bugs in case something changes between populating and delivering map values.
     getPostsForTag: (tag: string) => tagsMap.get(tag),
   };
