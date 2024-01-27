@@ -9,9 +9,9 @@ interface GetSlugArgs {
 export type GetSlug = (args: GetSlugArgs) => string;
 
 export interface Patrika {
-  getAll(): ContentItem[];
-  getById(id: string): ContentItem|undefined;
-  getPages(): ContentItem[];
-  getPosts(): ContentItem[];
+  getAll(): Promise<ContentItem[]>;
+  getById(id: string): Promise<ContentItem|undefined>;
+  getPages(): Promise<ContentItem[]>;
+  getPosts(): Promise<ContentItem[]>;
   getTags(): Record<string, ContentItem[]>;
 }

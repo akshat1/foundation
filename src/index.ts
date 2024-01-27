@@ -3,6 +3,7 @@ import { fileWalker } from "./fileWalker";
 import { FrontMatterAttributes } from "./front-matter";
 import { renderAllMarkdown } from "./markdown";
 import { GetSlug, Patrika } from "./typedefs";
+import PicoDB from "picodb";
 
 export {
   ContentItemType,
@@ -61,25 +62,26 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
     getSlug,
     excerpts = DefaultExcerpts,
   } = args;
-  const idMap:Record<string, ContentItem> = {};
+  const db = new PicoDB<ContentItem>();
 
   const pages = await fileWalker({
     globPattern: pagesGlob,
     type: ContentItemType.Page,
     getSlug,
-    idMap,
   });
+  db.insertMany(pages);
 
   const posts = await fileWalker({
     globPattern: postsGlob,
     type: ContentItemType.Post,
     getSlug,
-    idMap,
   });
+  db.insertMany(posts);
 
   // posts should be reverse chronologically sorted.
   posts.sort(comparePostsByPublishedDate);
 
+  // @TODO: How do we stop having the need to maintain a tagsMap?
   // Construct a map of tags to posts
   // We sorted posts before this step so that when we look up posts by tag, they are pre-sorted.
   const tagsMap: Record<string, ContentItem[]> = {};
@@ -93,10 +95,10 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
   });
 
   const patrika: Patrika = {
-    getAll: () => [...pages, ...posts],
-    getById: (id: string) => idMap[id],
-    getPages: () => pages,
-    getPosts: () => posts,
+    getAll: () => db.toArray(),
+    getById: async (id: string) => (await db.find({ id }).toArray())[0],
+    getPages: () => db.find({ type: ContentItemType.Page }).toArray(),
+    getPosts: () => db.find({ type: ContentItemType.Post }).toArray(),
     getTags: () => tagsMap,
     /// @ts-expect-error Doing a `?? []` here would potentially hide bugs in case something changes between populating and delivering map values.
     getPostsForTag: (tag: string) => tagsMap.get(tag),
