@@ -3327,6 +3327,11 @@ picocolors@^1.0.0:
   resolved "https://registry.yarnpkg.com/picocolors/-/picocolors-1.0.0.tgz#cb5bdc74ff3f51892236eaf79d68bc44564ab81c"
   integrity sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ==
 
+picodb@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/picodb/-/picodb-1.0.5.tgz#4c0e6e9ad3cee0d756938d7c513067d37ff10e2e"
+  integrity sha512-OCuuJscQOBqsQpNhfmpKVrOc3gISWDW68RMoJFewgHkRvS/UZq7AD3Qh57yWMV51WbzOxkTy4nO96tXMXof18g==
+
 picomatch@^2.0.4, picomatch@^2.2.1, picomatch@^2.2.3, picomatch@^2.3.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/picomatch/-/picomatch-2.3.1.tgz#3ba3833733646d9d3e4995946c1365a67fb07a42"

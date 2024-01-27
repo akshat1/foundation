@@ -1,6 +1,7 @@
 import { getPatrika } from ".";
 import assert from "assert";
 
+// TODO: Have more tests beyond just adhering to the interface (which TS checks anyway).
 describe("getPatrika", () => {
   it("should return an instance of Patrika", async () => {
     const patrika = await getPatrika({

@@ -1,18 +1,15 @@
-import { comparePostsByPublishedDate,ContentItem, ContentItemType, toContentItem } from "./ContentItem";
-import { FrontMatterAttributes, getFMData } from "./front-matter";
+import { comparePostsByPublishedDate,ContentItem, ContentItemType } from "./ContentItem";
+import { fileWalker } from "./fileWalker";
+import { FrontMatterAttributes } from "./front-matter";
 import { renderAllMarkdown } from "./markdown";
 import { GetSlug, Patrika } from "./typedefs";
-import { promises as fs } from "fs";
-import { glob as callbackGlob } from "glob";
-import { promisify } from "util";
+import PicoDB from "picodb";
 
 export {
   ContentItemType,
   ContentItem,
   FrontMatterAttributes,
 };
-
-const glob = promisify(callbackGlob);
 
 export interface GetPatrikaArgs {
   postsGlob: string;
@@ -65,40 +62,26 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
     getSlug,
     excerpts = DefaultExcerpts,
   } = args;
+  const db = new PicoDB<ContentItem>();
 
-  const idMap:Record<string, ContentItem> = {};
-  const fileWalker = async (globPattern: string, type: ContentItemType): Promise<ContentItem[]> => {
-    const filePaths = await glob(globPattern);
-    const items = [];
-    for (const filePath of filePaths) {
-      const stats = await fs.stat(filePath);
-      if (!stats.isFile()) {
-        continue;
-      }
-      
+  const pages = await fileWalker({
+    globPattern: pagesGlob,
+    type: ContentItemType.Page,
+    getSlug,
+  });
+  db.insertMany(pages);
 
-      const markdown = (await fs.readFile(filePath)).toString();
-      const fmData = getFMData({ markdown, filePath });
-      const item = toContentItem({
-        filePath,
-        stats,
-        fmData,
-        getSlug,
-        type,
-      });
+  const posts = await fileWalker({
+    globPattern: postsGlob,
+    type: ContentItemType.Post,
+    getSlug,
+  });
+  db.insertMany(posts);
 
-      items.push(item);
-      idMap[item.id] = item;
-    }
-
-    return items;
-  };
-
-  const pages = await fileWalker(pagesGlob, ContentItemType.Page);
-  const posts = await fileWalker(postsGlob, ContentItemType.Post);
   // posts should be reverse chronologically sorted.
   posts.sort(comparePostsByPublishedDate);
 
+  // @TODO: How do we stop having the need to maintain a tagsMap?
   // Construct a map of tags to posts
   // We sorted posts before this step so that when we look up posts by tag, they are pre-sorted.
   const tagsMap: Record<string, ContentItem[]> = {};
@@ -112,11 +95,12 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
   });
 
   const patrika: Patrika = {
-    getAll: () => [...pages, ...posts],
-    getById: (id: string) => idMap[id],
-    getPages: () => pages,
-    getPosts: () => posts,
+    getAll: () => db.toArray(),
+    getById: async (id: string) => (await db.find({ id }).toArray())[0],
+    getPages: () => db.find({ type: ContentItemType.Page }).toArray(),
+    getPosts: () => db.find({ type: ContentItemType.Post }).toArray(),
     getTags: () => tagsMap,
+    find: (query: Record<string, any>) => db.find(query).toArray(),
     /// @ts-expect-error Doing a `?? []` here would potentially hide bugs in case something changes between populating and delivering map values.
     getPostsForTag: (tag: string) => tagsMap.get(tag),
   };
