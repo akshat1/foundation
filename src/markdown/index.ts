@@ -38,7 +38,7 @@ export const renderAllMarkdown = async (args: RenderAllMarkdownArgs): Promise<vo
 
   // marked.use(...getExtensions({ getShortCode: handleShortCode }));
 
-  for (const item of patrika.getAll()) {
+  for (const item of (await patrika.getAll())) {
     item.body = await marked(item.markdown);
     item.excerpt = {};
     for (const excerptVariant in excerpts) {
