@@ -14,7 +14,7 @@ export interface FrontMatterAttributes {
   tags?: string[];
 }
 
-const DatePattern = /\d{4}-\d{2}-\d{2}/;
+const DatePattern = /\d{4}-\d{1,2}-\d{1,2}/;
 type ValidatorFunc = (obj: Record<string, any>) => boolean;
 type Schema = Record<string, ValidatorFunc>;
 const FMDataSchema: Schema = {

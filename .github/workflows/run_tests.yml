@@ -11,17 +11,24 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [20.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@v3
-    - uses: borales/actions-yarn@v3.0.0
-      with:
-          cmd: install
-    - uses: borales/actions-yarn@v3.0.0
-      with:
-        cmd: build # will run `yarn build` command
-    - uses: borales/actions-yarn@v3.0.0
-      with:
-        cmd: test # will run `yarn test` command
+      - uses: actions/checkout@v3
+        name: Checkout
+      - uses: borales/actions-yarn@v3.0.0
+        name: Install Dependencies
+        with:
+            cmd: install
+      - uses: borales/actions-yarn@v3.0.0
+        name: Lint
+        with:
+          cmd: lint # will run `yarn test` command
+      - uses: borales/actions-yarn@v3.0.0
+        with:
+          cmd: test # will run `yarn test` command
+      - uses: borales/actions-yarn@v3.0.0
+        name: Build
+        with:
+          cmd: build # will run `yarn build` command

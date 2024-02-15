@@ -1,5 +1,5 @@
 import { FrontMatterAttributes } from "./front-matter";
-import { GetSlug } from "./typedefs";
+import { GetSlug } from "./GetSlug";
 import { FrontMatterResult } from "front-matter";
 import { Stats } from "fs";
 
@@ -10,10 +10,22 @@ export enum ContentItemType {
 
 export interface ContentItem {
   authors: string[];
+  /**
+   * The HTML generated from the markdown content.
+   *
+   * This is optional because the body is generated in another pass and we need
+   * to account for a half-baked ContentItem, one without a body. Ideally we
+   * should use a partial type here so that the exposed API is consistent.
+   * 
+   * @TODO Use a partial type here instead of making `body` optional.
+   */
   body?: string;
   collections: string[];
   draft: boolean;
   excerpt: Record<string, string>;
+  /**
+   * `id` as specified using front-matter in the markdown file.
+   */
   id: string;
   image?: string;
   imgAlt?: string;

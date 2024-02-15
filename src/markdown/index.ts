@@ -1,6 +1,6 @@
-import { Patrika } from "../typedefs";
-import { getExtensions } from "./extensions";
-import { GetPostData } from "./extensions/typedefs";
+import { Patrika } from "../Patrika";
+// import { getExtensions } from "./extensions";
+// import { GetPostData } from "./extensions/typedefs";
 /// @ts-ignore
 import excerptHTML from "excerpt-html";
 import { marked } from "marked";
@@ -21,19 +21,19 @@ export const renderAllMarkdown = async (args: RenderAllMarkdownArgs): Promise<vo
     patrika,
     excerpts,
   } = args;
-  const getPostData: GetPostData = ({ post, property }) => {
-    if (post && property) {
-      const item = patrika.getById(post);
-      if (item) 
-        /// @ts-expect-error X-(
-        {return item[property];}
+  // const getPostData: GetPostData = async ({ post, property }) => {
+  //   if (post && property) {
+  //     const item = await patrika.find({ id: post });
+  //     if (item) 
+  //       /// @ts-expect-error X-(
+  //       {return item[property];}
       
-    }
-  }
+  //   }
+  // }
 
-  marked.use(...getExtensions({ getPostData }));
+  // marked.use(...getExtensions({ getPostData }));
 
-  for (const item of (await patrika.getAll())) {
+  for (const item of (await patrika.find())) {
     item.body = await marked(item.markdown);
     item.excerpt = {};
     for (const excerptVariant in excerpts) {
