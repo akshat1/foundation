@@ -1,6 +1,6 @@
 import { ContentItem, ContentItemType, toContentItem } from "./ContentItem";
 import { getFMData } from "./front-matter";
-import { GetSlug } from "./typedefs";
+import { GetSlug } from "./GetSlug";
 import { glob as callbackGlob } from "glob";
 import fs from "node:fs/promises";
 import { promisify } from "util";

@@ -1,8 +1,9 @@
 import { comparePostsByPublishedDate,ContentItem, ContentItemType } from "./ContentItem";
 import { fileWalker } from "./fileWalker";
 import { FrontMatterAttributes } from "./front-matter";
+import { GetSlug } from "./GetSlug";
 import { renderAllMarkdown } from "./markdown";
-import { GetSlug, Patrika } from "./typedefs";
+import { Patrika } from "./Patrika";
 import PicoDB from "picodb";
 
 export {
@@ -76,33 +77,17 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
     type: ContentItemType.Post,
     getSlug,
   });
-  db.insertMany(posts);
+  posts.sort(comparePostsByPublishedDate);
+  db.insertMany(posts); // @TODO: I wish Pico provided a sort method, but leaving that aside, does Pico maintain sort order? We might need to use TyrDB after all.
 
   // posts should be reverse chronologically sorted.
   posts.sort(comparePostsByPublishedDate);
 
-  // @TODO: How do we stop having the need to maintain a tagsMap?
-  // Construct a map of tags to posts
-  // We sorted posts before this step so that when we look up posts by tag, they are pre-sorted.
-  const tagsMap: Record<string, ContentItem[]> = {};
-  posts.forEach((post) => {
-    for (const tag of post.tags) {
-      if (!tagsMap[tag]) 
-        {tagsMap[tag] = [];}
-
-      tagsMap[tag].push(post);
-    }
-  });
-
   const patrika: Patrika = {
-    getAll: () => db.toArray(),
-    getById: async (id: string) => (await db.find({ id }).toArray())[0],
-    getPages: () => db.find({ type: ContentItemType.Page }).toArray(),
-    getPosts: () => db.find({ type: ContentItemType.Post }).toArray(),
-    getTags: () => tagsMap,
-    find: (query: Record<string, any>) => db.find(query).toArray(),
-    /// @ts-expect-error Doing a `?? []` here would potentially hide bugs in case something changes between populating and delivering map values.
-    getPostsForTag: (tag: string) => tagsMap.get(tag),
+    getPosts: async () => db.find({ type: ContentItemType.Post }).toArray(),
+    getPages: async () => db.find({ type: ContentItemType.Page }).toArray(),
+    find: (query?: Record<string, any>, projection?: Record<string, unknown>) => db.find(query, projection).toArray(),
+    _db: db,
   };
 
   // Render all markdown.

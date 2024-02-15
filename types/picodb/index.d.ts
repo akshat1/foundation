@@ -19,7 +19,7 @@ declare module "picodb" {
     insertOne: (data: DocumentType) => Promise<DocumentType>;
     updateMany: (query: Query, data: DocumentType) => Promise<DocumentType[]>;
     updateOne: (query: Query, data: DocumentType) => Promise<DocumentType>;
-    find: (query: Query) => ReturnedCollection<DocumentType>;
+    find: (query?: Query, projection?: Record<string, unknown>) => ReturnedCollection<DocumentType>;
     toArray: () => Promise<DocumentType[]>;
     on: (eventName: string, Callback) => Promise<void>;
     one: (eventName: string, Callback) => Promise<Record<string, unknown>>;
