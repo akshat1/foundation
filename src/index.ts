@@ -29,6 +29,7 @@ export interface GetPatrikaArgs {
    * }
    */
   excerpts?: Record<string, number>;
+  onShortCode?: (shortCode: string, args: string[]) => Promise<string>;
 }
 
 const DefaultExcerpts = {
