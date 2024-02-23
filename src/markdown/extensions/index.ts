@@ -1,10 +1,5 @@
+import { OnShortCode } from "./typedefs";
 import { MarkedExtension } from "marked";
-
-
-type OnShortCode = (args: Record<string, unknown>) => Promise<string>;
-interface GetExtensionsArgs {
-  onShortCode: OnShortCode;
-}
 
 interface SCToken {
   type: string;
@@ -54,7 +49,7 @@ export const getWalkTokens = (onShortCode: OnShortCode): Function =>
     token.html = await onShortCode(token.args); // TODO: Should we separate handler name from args (both will be specific in the ShortCode)?
   };
 
-const getUniversalShortCodeExtension = (args: GetExtensionsArgs): MarkedExtension => {
+const getUniversalShortCodeExtension = (onShortCode: OnShortCode): MarkedExtension => {
   /**
    * A Marked extension that identifies the Patrika shortcode and invokes the onShortCode function.
    */
@@ -64,11 +59,12 @@ const getUniversalShortCodeExtension = (args: GetExtensionsArgs): MarkedExtensio
     level: "block",
     start: (src: string): number|undefined => src.match(ShortCodePattern)?.index,
     tokenizer,
-    walkTokens: getWalkTokens(args.onShortCode),
+    walkTokens: getWalkTokens(onShortCode),
   };
 
   return universalShortCode;
 };
 
-export const getExtensions = (args: GetExtensionsArgs): MarkedExtension[] => [getUniversalShortCodeExtension(args)];
+export const getExtensions = (onShortCode?: OnShortCode): MarkedExtension[] =>
+  onShortCode instanceof Function ? [getUniversalShortCodeExtension(onShortCode)] : [];
 // See https://marked.js.org/using_pro#extensions

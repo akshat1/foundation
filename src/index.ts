@@ -3,6 +3,7 @@ import { fileWalker } from "./fileWalker";
 import { FrontMatterAttributes } from "./front-matter";
 import { GetSlug } from "./GetSlug";
 import { renderAllMarkdown } from "./markdown";
+import { OnShortCode } from "./markdown/extensions/typedefs";
 import { Patrika } from "./Patrika";
 import PicoDB from "picodb";
 
@@ -29,7 +30,7 @@ export interface GetPatrikaArgs {
    * }
    */
   excerpts?: Record<string, number>;
-  onShortCode?: (shortCode: string, args: string[]) => Promise<string>;
+  onShortCode?: OnShortCode;
 }
 
 const DefaultExcerpts = {
@@ -63,6 +64,7 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
     pagesGlob,
     getSlug,
     excerpts = DefaultExcerpts,
+    onShortCode,
   } = args;
   const db = new PicoDB<ContentItem>();
 
@@ -95,6 +97,7 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
   await renderAllMarkdown({
     excerpts,
     patrika,
+    onShortCode,
   });
 
   return patrika;

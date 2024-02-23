@@ -1,5 +1,6 @@
 import { Patrika } from "../Patrika";
-// import { getExtensions } from "./extensions";
+import { getExtensions } from "./extensions";
+import { OnShortCode } from "./extensions/typedefs";
 /// @ts-ignore
 import excerptHTML from "excerpt-html";
 import { marked } from "marked";
@@ -7,7 +8,7 @@ import { marked } from "marked";
 interface RenderAllMarkdownArgs {
   patrika: Patrika;
   excerpts: Record<string, number>;
-  onShortCode?: (shortCode: string, args: string[]) => Promise<string>;
+  onShortCode?: OnShortCode;
 }
 
 /**
@@ -21,17 +22,8 @@ export const renderAllMarkdown = async (args: RenderAllMarkdownArgs): Promise<vo
     patrika,
     excerpts,
   } = args;
-  // const getPostData: GetPostData = async ({ post, property }) => {
-  //   if (post && property) {
-  //     const item = await patrika.find({ id: post });
-  //     if (item) 
-  //       /// @ts-expect-error X-(
-  //       {return item[property];}
-      
-  //   }
-  // }
 
-  // marked.use(...getExtensions({ onShortCode: args.onShortCode }));
+  marked.use(...getExtensions(args.onShortCode));
 
   for (const item of (await patrika.find())) {
     item.body = await marked(item.markdown);
