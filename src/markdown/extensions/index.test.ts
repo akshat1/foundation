@@ -9,25 +9,43 @@ describe("universal shortcode", () => {
 
   describe("tokenizer", () => {    
     test("should return false if the source string does not contain a shortcode", () => {
-      const src = "This is a test string.";
-      const result = tokenizer.call(fakeThis, src);
-      expect(result).toBe(false);
+      expect(tokenizer.call(fakeThis, "This is a test string.")).toBe(false);
+    });
+
+    test("should return false if the source string contains an escaped shortcode in the middle", () => {
+      expect(tokenizer.call(fakeThis, 'The string \\[PSC foo="bar"\\] is a test string with an escaped shortcode.')).toBe(false);
+    });
+
+    test("should return false if the source string starts with an escaped shortcode.", () => {
+      expect(tokenizer.call(fakeThis, '\\[PSC foo="bar"\\] is a test string with an escaped shortcode.')).toBe(false);
     });
 
     test("should return a token if the source string contains a shortcode", () => {
-      const src = "This is a test string with a shortcode [PSC foo=\"bar\" baz='qux' ab=0 cd=true]";
-      const result = tokenizer.call(fakeThis, src);
-      expect(result).toMatchObject({
-        type: "PSC",
-        raw: "[PSC foo=\"bar\" baz='qux' ab=0 cd=true]",
-        tokens: [],
-        args: {
-          foo: "bar",
-          baz: "qux",
-          ab: 0,
-          cd: true,
-        },
-      });
+      expect(tokenizer.call(fakeThis, "This is a test string with a shortcode [PSC foo=\"bar\" baz='qux' ab=0 cd=true]"))
+        .toMatchObject({
+          type: "PSC",
+          raw: "[PSC foo=\"bar\" baz='qux' ab=0 cd=true]",
+          tokens: [],
+          args: {
+            foo: "bar",
+            baz: "qux",
+            ab: 0,
+            cd: true,
+          },
+        });
+
+      expect(tokenizer.call(fakeThis, "[PSC foo=\"bar\" baz='qux' ab=0 cd=true]"))
+        .toMatchObject({
+          type: "PSC",
+          raw: "[PSC foo=\"bar\" baz='qux' ab=0 cd=true]",
+          tokens: [],
+          args: {
+            foo: "bar",
+            baz: "qux",
+            ab: 0,
+            cd: true,
+          },
+        });
     });
   });
 

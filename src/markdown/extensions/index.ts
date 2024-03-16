@@ -10,11 +10,11 @@ interface SCToken {
   args: Record<string, unknown>;
 }
 
-const ShortCodePattern = /\[PSC[^\]]+]/;
+const ShortCodePattern = /(\\)?\[PSC[^\]]+]/;
 const ParameterPattern = /\w+=(\w+|([",']\w+[",']))/g;
 export function tokenizer (src: string): SCToken | false {
   const match = ShortCodePattern.exec(src);
-  if (match) {
+  if (match && (!match[0].startsWith("\\"))) {
     const propMatches = match[0].match(ParameterPattern);
     let props: Record<string, unknown> = {};
     if (propMatches?.length) {
