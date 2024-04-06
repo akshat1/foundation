@@ -23,6 +23,7 @@ export const renderAllMarkdown = async (args: RenderAllMarkdownArgs): Promise<vo
     excerpts,
   } = args;
 
+  /// @ts-ignore See comments about ExtensionObject type in docs vs. typedefs in extensions/index
   marked.use(...getExtensions(args.onShortCode));
 
   for (const item of (await patrika.find())) {
