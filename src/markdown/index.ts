@@ -45,7 +45,6 @@ export const renderAllMarkdown = async (args: RenderAllMarkdownArgs): Promise<vo
     // Could even be a good excuse to experiment with Rust and/or WASM.
     // But it's fine for now.
     item.body = await marked(item.markdown);
-    console.log(item.body);
     item.excerpt = {};
     for (const excerptVariant in excerpts) {
       item.excerpt[excerptVariant] = excerptHTML(item.body, {
