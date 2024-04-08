@@ -15,7 +15,8 @@
     "docs": "typedoc",
     "lint": "eslint . --ext .ts,.tsx",
     "prepare": "yarn run clean; yarn run build",
-    "test": "jest"
+    "test": "jest",
+    "sandbox": "ts-node ./sandbox.ts"
   },
   "devDependencies": {
     "@tsconfig/node16": "^1.0.3",

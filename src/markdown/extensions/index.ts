@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { getExtension } from "./inline";
-import { MarkedExtensionAsPerDocs, OnShortCode } from "./typedefs";
+import { MarkedExtensionAsPerDocs } from "./typedefs";
 
-export function getExtensions (onShortCode?: OnShortCode): MarkedExtensionAsPerDocs[] {
-  return [getExtension(onShortCode)];
+export function getExtensions (): MarkedExtensionAsPerDocs[] {
+  return [getExtension()];
 }

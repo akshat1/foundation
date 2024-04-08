@@ -16,14 +16,14 @@ export interface MarkedExtensionAsPerDocs {
   start(src: string, pos: number): number|void;
   async: boolean;
   tokenizer(src: string, tokens: SCToken[]): void;
-  walkTokens(token: SCToken): void | Promise<void>;
+  renderer(token: SCToken): string;
 }
 
 export interface SCToken {
   type: string;
   raw: string;
   text: string;
-  tokens: SCToken[];
+  tokens?: SCToken[];
   html: string;
   args: Record<string, unknown>;
 }

@@ -18,16 +18,34 @@ interface RenderAllMarkdownArgs {
  * @param patrika
  */
 export const renderAllMarkdown = async (args: RenderAllMarkdownArgs): Promise<void> => {
+  console.count("renderAllMarkdown");
   const {
     patrika,
     excerpts,
+    onShortCode,
   } = args;
 
-  /// @ts-ignore See comments about ExtensionObject type in docs vs. typedefs in extensions/index
-  marked.use(...getExtensions(args.onShortCode));
-
-  for (const item of (await patrika.find())) {
+  if (typeof onShortCode === "function") {
+    /// @ts-ignore See comments about ExtensionObject type in docs vs. typedefs in extensions/index
+    marked.use({ extensions: getExtensions(args.onShortCode) });
+    marked.use({
+      async: true,
+      walkTokens: async (token) => {
+        if (token.type === "P:I") {
+          token.html = await onShortCode(token.args);
+        }
+      },
+    });
+  }
+  const items = await patrika.find({});
+  for (const item of items) {
+    console.log("Populating body...");
+    // This might need to be tweaked for performance in the future.
+    // Either by spinning up a worker pool or by using a different markdown renderer.
+    // Could even be a good excuse to experiment with Rust and/or WASM.
+    // But it's fine for now.
     item.body = await marked(item.markdown);
+    console.log(item.body);
     item.excerpt = {};
     for (const excerptVariant in excerpts) {
       item.excerpt[excerptVariant] = excerptHTML(item.body, {

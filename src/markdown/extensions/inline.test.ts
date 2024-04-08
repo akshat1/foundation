@@ -1,5 +1,4 @@
-import { getWalkTokens, start, tokenizer } from "./inline";
-import { SCToken } from "./typedefs";
+import { start, tokenizer } from "./inline";
 
 describe("start", () => {
   it("should return the index of the next potential start of the custom token", () => {
@@ -17,12 +16,11 @@ describe("start", () => {
 describe("tokenizer", () => {
   it("should return a custom token with the correct type, raw, text, tokens, and args", () => {
     const src = "[P:I pa=foo pb=\"bar\" pc=0 pd=true pe='baz' pf=1.5]";
-    const token = tokenizer(src, []);
+    const token = tokenizer(src);
     expect(token).toEqual({
       type: "P:I",
       raw: src,
       text: src,
-      tokens: [],
       html: "",
       args: {
         pa: "foo",
@@ -33,51 +31,5 @@ describe("tokenizer", () => {
         pf: 1.5,
       },
     });
-  });
-});
-
-describe("getWalkTokens", () => {
-  it("should set the html property of the token if the type is 'P:I' and onShortCode is a function", async () => {
-    const onShortCode = jest.fn().mockResolvedValue("<p>ShortCode HTML</p>");
-    const token: SCToken = {
-      type: "P:I",
-      raw: "",
-      text: "",
-      tokens: [],
-      html: "",
-      args: {},
-    };
-    await getWalkTokens(onShortCode)(token);
-    expect(token.html).toBe("<p>ShortCode HTML</p>");
-    expect(onShortCode).toHaveBeenCalledWith(token.args);
-  });
-
-  it("should not set the html property of the token if the type is not 'P:I'", async () => {
-    const onShortCode = jest.fn().mockResolvedValue("<p>ShortCode HTML</p>");
-    const token: SCToken = {
-      type: "P:II",
-      raw: "",
-      text: "",
-      tokens: [],
-      html: "",
-      args: {},
-    };
-    await getWalkTokens(onShortCode)(token);
-    expect(token.html).toBe("");
-    expect(onShortCode).not.toHaveBeenCalled();
-  });
-
-  it("should not set the html property of the token if onShortCode is not a function", async () => {
-    const onShortCode = undefined;
-    const token: SCToken = {
-      type: "P:I",
-      raw: "",
-      text: "",
-      tokens: [],
-      html: "",
-      args: {},
-    };
-    await getWalkTokens(onShortCode)(token);
-    expect(token.html).toBe("");
   });
 });

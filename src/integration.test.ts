@@ -5,24 +5,29 @@ import path from "path";
 describe("getPatrika", () => {
   let patrika: Patrika;
   const onShortCode = jest.fn(async (args) => {
-    console.log("ShortCodeCalled!!! with args:", args);
-    return "&lt;OnShortCode Called&gt;";
+    return `<span>OnShortCode Called With Args ${JSON.stringify(args)}</span>`;
   });
   
 
   beforeAll(async () => {
-    console.log("Someone kill me please");
     patrika = await getPatrika({
-      postsGlob: path.join(__dirname, "fixtures", "content", "posts", "fourth.md"),
-      pagesGlob: path.join(__dirname, "fixtures", "content", "foo", "**", "*.md"),
+      postsGlob: path.join(process.cwd(), "src", "fixtures", "content", "posts", "**", "*.md"),
+      pagesGlob: path.join(process.cwd(), "src", "fixtures", "content", "pages", "**", "*.md"),
       getSlug: ({ filePath, attributes }) => attributes.title || path.basename(filePath).replace(/\.md$/, ""),
       onShortCode,
     });
   });
 
-  test("KILLME", async () => {
+  test("onShortcode should be called when the shortcode is encountered.", async () => {
+    // This is rather delicate test because only one of the files contains the shortcode at this
+    // moment. If we ever add the shortcode to another file, this test will need to be updated.
     expect(onShortCode).toBeCalledTimes(1);
   });
+
+  // test("Item.body should include the return value from onShortCode", async () => {
+  //   const items = await patrika.find({ id: "fourth-one" });
+  //   console.log(items);
+  // });
 
   test("Patrika should expose the expected API", () => {
     expect(patrika.getPages).toBeInstanceOf(Function);
@@ -30,19 +35,19 @@ describe("getPatrika", () => {
     expect(patrika.find).toBeInstanceOf(Function);
   });
 
-  test.skip("getPosts should return the correct number of posts", async () => {
+  test("getPosts should return the correct number of posts", async () => {
     const posts = await patrika.getPosts();
     expect(posts).toBeInstanceOf(Array);
     expect(posts.length).toBe(6);
   });
 
-  test.skip("getPosts should return the correct number of pages", async () => {
+  test("getPosts should return the correct number of pages", async () => {
     const pages = await patrika.getPages();
     expect(pages).toBeInstanceOf(Array);
     expect(pages.length).toBe(3);
   });
 
-  test.skip("find should return the correct number of ContentItems", async () => {
+  test("find should return the correct number of ContentItems", async () => {
     const allItems = await patrika.find();
     expect(allItems).toBeInstanceOf(Array);
     expect(allItems.length).toBe(9);

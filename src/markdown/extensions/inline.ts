@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import {MarkedExtensionAsPerDocs, OnShortCode,SCToken } from "./typedefs";
+import {MarkedExtensionAsPerDocs, SCToken } from "./typedefs";
 
 /**
  * Returns a Marked extension.
@@ -18,14 +18,15 @@ import {MarkedExtensionAsPerDocs, OnShortCode,SCToken } from "./typedefs";
  * 
  * @see https://marked.js.org/using_pro#extensions
  */
-export function getExtension (onShortCode?: OnShortCode): MarkedExtensionAsPerDocs {
+export function getExtension (): MarkedExtensionAsPerDocs {
+  console.count("getExtension called");
   return {
     name: "P:I", // Patrika Inline
     level: "inline",
     async: true,
     start,
-    tokenizer, 
-    walkTokens: getWalkTokens(onShortCode),
+    tokenizer,
+    renderer: function (token) { return token.html },
   };
 }
 
@@ -47,7 +48,7 @@ const ParamPattern = /(\w+=[\w"'\.]+)/g;
  * @param src The markdown source
  * @returns The custom token
  */
-export function tokenizer (src: string, tokens: SCToken[]): SCToken | void {
+export function tokenizer (src: string): SCToken | void {
   const l1Match = TokenPattern.exec(src);
   if(l1Match) {
     const tag = l1Match[0];
@@ -62,11 +63,11 @@ export function tokenizer (src: string, tokens: SCToken[]): SCToken | void {
         args[key] = parseValue(value);
       }
     }
+
     return {
       type: "P:I",
       raw: tag,
       text: tag,
-      tokens,
       html: "",
       args,
     };
@@ -84,7 +85,7 @@ export function tokenizer (src: string, tokens: SCToken[]): SCToken | void {
  * parseValue(`0`) // number 0
  * parseValue(`1.1`) // number 1.1
  * parseValue(`false`) // string false
- * * parseValue(false) // boolean false
+ * parseValue(false) // boolean false
  */
 function parseValue (str: string): string|number|boolean {
   if (/true|false|[\d\.]/.test(str)) { // Handle numbers and booleans
@@ -102,19 +103,4 @@ function parseValue (str: string): string|number|boolean {
 
   console.warn(`Could not parse value: ${str}, passing on a string.`);
   return str; // Handle everything else as a string, the shortcode handler can handle it.
-}
-
-/**
- * Returns a function that walks through the tokens and applies the provided `onShortCode` function
- * to tokens of type "P:I".
- *
- * @param onShortCode - The function to be applied to tokens of type "P:I".
- * @returns A promise that resolves when the token walking is complete.
- */
-export function getWalkTokens (onShortCode?: OnShortCode) {
-  return (async function walkTokens(token: SCToken): Promise<void> {
-    if(token.type === "P:I" && typeof onShortCode === "function") {
-      token.html = await onShortCode(token.args);
-    }
-  });
 }
