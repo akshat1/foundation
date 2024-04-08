@@ -24,10 +24,10 @@ describe("getPatrika", () => {
     expect(onShortCode).toBeCalledTimes(1);
   });
 
-  // test("Item.body should include the return value from onShortCode", async () => {
-  //   const items = await patrika.find({ id: "fourth-one" });
-  //   console.log(items);
-  // });
+  test("Item.body should include the return value from onShortCode", async () => {
+    const item = (await patrika.find({ id: "fourth-one" }))[0];
+    expect(item.body).toContain('<span>OnShortCode Called With Args {"foo":"bar","baz":"qux"}</span>');
+  });
 
   test("Patrika should expose the expected API", () => {
     expect(patrika.getPages).toBeInstanceOf(Function);

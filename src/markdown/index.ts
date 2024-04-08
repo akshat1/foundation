@@ -1,11 +1,14 @@
+import { ContentItem } from "..";
 import { Patrika } from "../Patrika";
 import { getExtensions } from "./extensions";
 import { OnShortCode } from "./extensions/typedefs";
 /// @ts-ignore
 import excerptHTML from "excerpt-html";
 import { marked } from "marked";
+import PicoDB from "picodb";
 
 interface RenderAllMarkdownArgs {
+  db: PicoDB<ContentItem>;
   patrika: Patrika;
   excerpts: Record<string, number>;
   onShortCode?: OnShortCode;
@@ -18,11 +21,11 @@ interface RenderAllMarkdownArgs {
  * @param patrika
  */
 export const renderAllMarkdown = async (args: RenderAllMarkdownArgs): Promise<void> => {
-  console.count("renderAllMarkdown");
   const {
-    patrika,
+    db,
     excerpts,
     onShortCode,
+    patrika,
   } = args;
 
   if (typeof onShortCode === "function") {
@@ -39,7 +42,6 @@ export const renderAllMarkdown = async (args: RenderAllMarkdownArgs): Promise<vo
   }
   const items = await patrika.find({});
   for (const item of items) {
-    console.log("Populating body...");
     // This might need to be tweaked for performance in the future.
     // Either by spinning up a worker pool or by using a different markdown renderer.
     // Could even be a good excuse to experiment with Rust and/or WASM.
@@ -51,5 +53,6 @@ export const renderAllMarkdown = async (args: RenderAllMarkdownArgs): Promise<vo
         pruneLength: excerpts[excerptVariant],
       });
     }
+    db.updateOne({ id: item.id }, item);
   }
 };

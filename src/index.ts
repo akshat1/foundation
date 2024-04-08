@@ -95,6 +95,7 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
 
   // Render all markdown.
   await renderAllMarkdown({
+    db,
     excerpts,
     patrika,
     onShortCode,

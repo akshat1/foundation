@@ -19,7 +19,6 @@ import {MarkedExtensionAsPerDocs, SCToken } from "./typedefs";
  * @see https://marked.js.org/using_pro#extensions
  */
 export function getExtension (): MarkedExtensionAsPerDocs {
-  console.count("getExtension called");
   return {
     name: "P:I", // Patrika Inline
     level: "inline",
@@ -101,6 +100,5 @@ function parseValue (str: string): string|number|boolean {
     return JSON.parse(`"${strMatch[1]}"`); // single-quoted strings will be converted to double-quoted strings.
   }
 
-  console.warn(`Could not parse value: ${str}, passing on a string.`);
   return str; // Handle everything else as a string, the shortcode handler can handle it.
 }
