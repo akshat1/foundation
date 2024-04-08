@@ -1,40 +1,13 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import {MarkedExtensionAsPerDocs, SCToken } from "./typedefs";
 
-/**
- * Returns a Marked extension.
- * The extension will handle custom markdown syntax such that when it
- * encounters our custom markdown tag, it will call the supplied onShortCode
- * function with the args and assign the result to the html property of the
- * token.
- * 
- * For example, given the following markdown:
- * I'm writing this [PSC foo="bar" baz='qux' ab=0 cd=true] with a custom
- * markdown tag.
- * 
- * The extension will call onShortCode with the args
- * { foo: "bar", baz: "qux", ab: 0, cd: true } and assign the result to the
- * html property of the token.
- * 
- * @see https://marked.js.org/using_pro#extensions
- */
-export function getExtension (): MarkedExtensionAsPerDocs {
-  return {
-    name: "P:I", // Patrika Inline
-    level: "inline",
-    async: true,
-    start,
-    tokenizer,
-    renderer: function (token) { return token.html },
-  };
-}
+
 
 const StartPattern = /\S?\[P\:I[^\]]+\]/;
 /**
  * @param src The markdown source
  * @returns The next potential start of the custom token.
  */
-export function start (src: string): number | void {
+export const start = (src: string): number | void => {
   const match = StartPattern.exec(src);
   if (match && match[0] && match[0].startsWith("[P:I")) {
     return match.index;
@@ -47,7 +20,7 @@ const ParamPattern = /(\w+=[\w"'\.]+)/g;
  * @param src The markdown source
  * @returns The custom token
  */
-export function tokenizer (src: string): SCToken | void {
+export const tokenizer = (src: string): SCToken | void => {
   const l1Match = TokenPattern.exec(src);
   if(l1Match) {
     const tag = l1Match[0];
@@ -86,7 +59,7 @@ export function tokenizer (src: string): SCToken | void {
  * parseValue(`false`) // string false
  * parseValue(false) // boolean false
  */
-function parseValue (str: string): string|number|boolean {
+export const parseValue = (str: string): string|number|boolean => {
   if (/true|false|[\d\.]/.test(str)) { // Handle numbers and booleans
     // Could've added this to the regex above but I don't want to easily understand things a month from now.
     // JSON.parse will return the correct primitive type.
@@ -102,3 +75,29 @@ function parseValue (str: string): string|number|boolean {
 
   return str; // Handle everything else as a string, the shortcode handler can handle it.
 }
+
+/**
+ * Returns a Marked extension.
+ * The extension will handle custom markdown syntax such that when it
+ * encounters our custom markdown tag, it will call the supplied onShortCode
+ * function with the args and assign the result to the html property of the
+ * token.
+ * 
+ * For example, given the following markdown:
+ * I'm writing this [PSC foo="bar" baz='qux' ab=0 cd=true] with a custom
+ * markdown tag.
+ * 
+ * The extension will call onShortCode with the args
+ * { foo: "bar", baz: "qux", ab: 0, cd: true } and assign the result to the
+ * html property of the token.
+ * 
+ * @see https://marked.js.org/using_pro#extensions
+ */
+export const getExtension = (): MarkedExtensionAsPerDocs => ({
+  name: "P:I", // Patrika Inline
+  level: "inline",
+  async: true,
+  start,
+  tokenizer,
+  renderer: function (token) { return token.html },
+});

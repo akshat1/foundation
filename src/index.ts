@@ -58,7 +58,7 @@ const DefaultExcerpts = {
  * };
  * ```
  */
-export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
+export const getPatrika = async (args: GetPatrikaArgs): Promise<Patrika> => {
   const {
     postsGlob,
     pagesGlob,

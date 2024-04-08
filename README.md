@@ -2,26 +2,7 @@
 
 ### Patrikā (पत्रिका):—(nf) a magazine; journal.
 
-An API to serve content stored in markdown files on disk. Intended to be used with static site generators like [Pequeno](https://github.com/signalkuppe/pequeno).
-
-## Usage example with Pequeno
-
-```js
-// Example usage with Pequeno for one of the data files.
-const slugify = require("slugify");
-const path = require("path");
-
-module.exports = async () => {
- // in real usage you'd usually want to cache the instance and use it in all your data files.
- const patrika = await getPatrika({
-   pagesGlob: path.join("content", "pages", "**", "*.md"),
-   postsGlob: path.join("content", "posts", "**", "*.md"),
-   getSlug: ({ filePath, fmData }) => fmData.attributes.title || slugify(path.basename(filePath).replace(/\.md$/, "")),
- });
-
- return patrika.getPages();
-};
-```
+A utility to read a collection of Markdown files and associated HTML. Intended to be used with site renderer of your choice. It could be a static site renderer, or even a client side renderer where you put behind (say) an Express wrapper.
 
 ## Requirements
 
@@ -41,30 +22,38 @@ export interface FrontMatterAttributes {
 
 ## Custom short-codes
 
-Patrikā is geared towards Markdown and FrontMatter, and fortunately, the Markdown node package lets us add custom extensions. We use this mechanism to add a few short-codes for convenience. These are entirely optional for you to use, but we find them useful.
-
-### PostLink
-
-PostLink let's you insert a hyperlink to another post without having to know the actual URL of the post/page. You just need to provide the id of the target post, as defined in FrontMatter.
-
-Consider this markdown
+Sometimes, you need to insert custom instructions in your markdown content. For instance, you might want to insert a hyperlink to a post by the post-id so that you don't have to specify the path to the actual html file. Or even, fetch data async from an external data source (say from a DB or a service). For such use-cases, Patrikā provides a mechanism to specify a shortcode handler in the getPatrika call. For example,
 
 ```markdown
-[PostLink post="another-post" text="See this other post" title="hyperlink to another post"]
+# Example shortcode usage.
+
+Our author Adam Smith has written [P:I tagName="author-data" authorID="adam-smith" requested="post-count"] posts. Here's his picture.
+
+[P:I tagName="author-data" authorId="adam-smith" requested="picture"]
 ```
 
-The given short-code would output
-
-```html
-<a href="https://my-site.com/path/to/another-post" title="hyperlink to another post">
-  See this other post
-</a>
+```js
+const patrika = await getPatrika({
+  pagesGlob: path.join("content", "pages", "**", "*.md"),
+  postsGlob: path.join("content", "posts", "**", "*.md"),
+  getSlug: ({ filePath, fmData }) => fmData.attributes.title || slugify(path.basename(filePath).replace(/\.md$/, "")),
+  onShortCode: async (args) => {
+    switch (args.tagName) {
+      case "author-data": {
+        switch (args.requested) {
+          "post-count": return (await patrika.find({ authors: args.authorID }) ).length;
+          "picture": return (await fetch(`${authorPictureService}/${args.authorID}`));
+          // ....
+          // Potential other data attributes
+        },
+        // Potential other tags.
+      }
+    }
+  },
+});
 ```
 
-### PostData
+Patrikā's shortcode mechanism is very unopinionated, because it let's the user (you) implement an unlimited number of shortcodes using a single `onShortCode` callback. What would be a tagName in usual markup becomes a shortcode parameter which would show up in your args object.
 
-PostData let's you insert any data from another post's associated FrontMatter. For example, this MarkDown would insert the value of the authors field from the referred post's FrontMatter data.
+At the moment there's just one tag, `[P:I]` (Patrikā:inline) which is intended for standalone content. Eventually, we'll also provide a mechanism to enclose content (to create excerpts, for instance).
 
-```markdown
-[PostData post="another-post" property="authors"]
-```
