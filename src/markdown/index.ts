@@ -1,7 +1,7 @@
 import { ContentItem } from "..";
 import { Patrika } from "../Patrika";
 import { getExtensions } from "./extensions";
-import { OnShortCode } from "./extensions/typedefs";
+import { OnShortCode } from "./extensions/OnShortCode";
 /// @ts-ignore
 import excerptHTML from "excerpt-html";
 import { marked } from "marked";
@@ -35,7 +35,7 @@ export const renderAllMarkdown = async (args: RenderAllMarkdownArgs): Promise<vo
       async: true,
       walkTokens: async (token) => {
         if (token.type === "P:I") {
-          token.html = await onShortCode(token.args);
+          token.html = await onShortCode(token.args, patrika);
         }
       },
     });

@@ -3,7 +3,7 @@ import { fileWalker } from "./fileWalker";
 import { FrontMatterAttributes } from "./front-matter";
 import { GetSlug } from "./GetSlug";
 import { renderAllMarkdown } from "./markdown";
-import { OnShortCode } from "./markdown/extensions/typedefs";
+import { OnShortCode } from "./markdown/extensions/OnShortCode";
 import { Patrika } from "./Patrika";
 import PicoDB from "picodb";
 
@@ -11,6 +11,7 @@ export {
   ContentItemType,
   ContentItem,
   FrontMatterAttributes,
+  Patrika,
 };
 
 export interface GetPatrikaArgs {

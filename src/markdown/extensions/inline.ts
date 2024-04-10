@@ -1,6 +1,5 @@
-import {MarkedExtensionAsPerDocs, SCToken } from "./typedefs";
-
-
+import { MarkedExtensionAsPerDocs } from "./MarkedExtensionAsPerDocs";
+import { SCToken } from "./SCToken";
 
 const StartPattern = /\S?\[P\:I[^\]]+\]/;
 /**
@@ -35,6 +34,8 @@ export const tokenizer = (src: string): SCToken | void => {
         args[key] = parseValue(value);
       }
     }
+
+    console.log("args>>>", args);
 
     return {
       type: "P:I",
@@ -99,5 +100,5 @@ export const getExtension = (): MarkedExtensionAsPerDocs => ({
   async: true,
   start,
   tokenizer,
-  renderer: function (token) { return token.html },
+  renderer: (token: SCToken) => token.html,
 });
