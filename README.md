@@ -53,7 +53,13 @@ const patrika = await getPatrika({
 });
 ```
 
-Patrikā's shortcode mechanism is very unopinionated, because it let's the user (you) implement an unlimited number of shortcodes using a single `onShortCode` callback. What would be a tagName in usual markup becomes a shortcode parameter which would show up in your args object.
+Patrikā's shortcode mechanism is very unopinionated, because it let's the user (you) implement an unlimited number of shortcodes using a single `onShortCode` callback. What would be a tagName in usual markup becomes a shortcode parameter which would show up in your args object. The only optinionated bits is the syntax (strings must be quoted with double quotes). Valid (made up) examples are
+
+```markdown
+[P:I toRender="picture" assetId=42]
+[P:I tagName="postLink postId="a-particular-post" title="Link to a particular post" text="Click here"]
+[P:I foo="bar" baz=42 qux=3.14 quux=true corge=false]
+```
 
 At the moment there's just one tag, `[P:I]` (Patrikā:inline) which is intended for standalone content. Eventually, we'll also provide a mechanism to enclose content (to create excerpts, for instance).
 
