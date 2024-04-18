@@ -4,6 +4,8 @@ import { getExtensions } from "./extensions";
 import { OnShortCode } from "./extensions/OnShortCode";
 /// @ts-ignore
 import excerptHTML from "excerpt-html";
+/// @ts-ignore
+import { html } from "js-beautify";
 import { marked } from "marked";
 import PicoDB from "picodb";
 
@@ -12,6 +14,7 @@ interface RenderAllMarkdownArgs {
   patrika: Patrika;
   excerpts: Record<string, number>;
   onShortCode?: OnShortCode;
+  prettify?: boolean;
 }
 
 /**
@@ -47,6 +50,28 @@ export const renderAllMarkdown = async (args: RenderAllMarkdownArgs): Promise<vo
     // Could even be a good excuse to experiment with Rust and/or WASM.
     // But it's fine for now.
     item.body = await marked(item.markdown);
+    if (args.prettify) {  // This doesn't work very well; need to spend some time on it.
+      item.body = html(item.body, {
+        "indent_size": "2",
+        "indent_char": " ",
+        "max_preserve_newlines": "5",
+        "preserve_newlines": true,
+        "keep_array_indentation": false,
+        "break_chained_methods": false,
+        "indent_scripts": "normal",
+        "brace_style": "collapse",
+        "space_before_conditional": true,
+        "unescape_strings": false,
+        "jslint_happy": false,
+        "end_with_newline": false,
+        "wrap_line_length": "0",
+        "indent_inner_html": false,
+        "comma_first": false,
+        "e4x": false,
+        "indent_empty_lines": false,
+      });
+    }
+
     item.excerpt = {};
     for (const excerptVariant in excerpts) {
       item.excerpt[excerptVariant] = excerptHTML(item.body, {

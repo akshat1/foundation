@@ -12,6 +12,7 @@ export {
   ContentItem,
   FrontMatterAttributes,
   Patrika,
+  OnShortCode,
 };
 
 export interface GetPatrikaArgs {
@@ -32,6 +33,7 @@ export interface GetPatrikaArgs {
    */
   excerpts?: Record<string, number>;
   onShortCode?: OnShortCode;
+  prettify?: boolean;
 }
 
 const DefaultExcerpts = {
@@ -61,11 +63,12 @@ const DefaultExcerpts = {
  */
 export const getPatrika = async (args: GetPatrikaArgs): Promise<Patrika> => {
   const {
-    postsGlob,
-    pagesGlob,
-    getSlug,
     excerpts = DefaultExcerpts,
+    getSlug,
     onShortCode,
+    pagesGlob,
+    postsGlob,
+    prettify,
   } = args;
   const db = new PicoDB<ContentItem>();
 
@@ -98,8 +101,9 @@ export const getPatrika = async (args: GetPatrikaArgs): Promise<Patrika> => {
   await renderAllMarkdown({
     db,
     excerpts,
-    patrika,
     onShortCode,
+    patrika,
+    prettify,
   });
 
   return patrika;
