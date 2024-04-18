@@ -13,7 +13,7 @@
     "build": "tsc",
     "clean": "rm -rf lib/ coverage/",
     "docs": "typedoc",
-    "lint": "eslint --fix . --ext .ts,.tsx",
+    "lint": "eslint . --ext .ts,.tsx",
     "prepare": "yarn run clean; yarn run build",
     "test": "jest",
     "sandbox": "ts-node ./sandbox.ts"
