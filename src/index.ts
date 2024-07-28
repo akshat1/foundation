@@ -3,6 +3,7 @@ import { fileWalker } from "./fileWalker";
 import { FrontMatterAttributes } from "./front-matter";
 import { GetSlug } from "./GetSlug";
 import { renderAllMarkdown } from "./markdown";
+import { OnShortCode } from "./markdown/extensions/OnShortCode";
 import { Patrika } from "./Patrika";
 import PicoDB from "picodb";
 
@@ -10,6 +11,8 @@ export {
   ContentItemType,
   ContentItem,
   FrontMatterAttributes,
+  Patrika,
+  OnShortCode,
 };
 
 export interface GetPatrikaArgs {
@@ -29,6 +32,8 @@ export interface GetPatrikaArgs {
    * }
    */
   excerpts?: Record<string, number>;
+  onShortCode?: OnShortCode;
+  prettify?: boolean;
 }
 
 const DefaultExcerpts = {
@@ -56,12 +61,14 @@ const DefaultExcerpts = {
  * };
  * ```
  */
-export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
+export const getPatrika = async (args: GetPatrikaArgs): Promise<Patrika> => {
   const {
-    postsGlob,
-    pagesGlob,
-    getSlug,
     excerpts = DefaultExcerpts,
+    getSlug,
+    onShortCode,
+    pagesGlob,
+    postsGlob,
+    prettify,
   } = args;
   const db = new PicoDB<ContentItem>();
 
@@ -92,8 +99,11 @@ export async function getPatrika (args: GetPatrikaArgs): Promise<Patrika> {
 
   // Render all markdown.
   await renderAllMarkdown({
+    db,
     excerpts,
+    onShortCode,
     patrika,
+    prettify,
   });
 
   return patrika;

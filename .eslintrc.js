@@ -23,7 +23,7 @@ module.exports = {
     "import/no-default-export": "error",
     "no-useless-escape": "off",
     "simple-import-sort/imports": ["error", { groups: [] }],
-    quotes: ["error", "double"],
+    quotes: ["error", "double", { "avoidEscape": true }],
     curly: ["error", "all"],
   },
   settings: {

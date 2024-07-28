@@ -15,7 +15,7 @@ Aenean nec euismod erat, sit amet vehicula ante. Aliquam dignissim ut sem eget p
 
 # Another H1
 
-Morbi gravida fringilla vulputate. Aliquam facilisis sem feugiat, sollicitudin arcu sit amet, sodales augue. Vestibulum a lorem luctus, congue nunc at, pretium nulla. Curabitur tincidunt eros sit amet tincidunt egestas. Aenean ac mattis lacus, eu efficitur eros. Pellentesque massa lectus, sodales sed erat quis, facilisis maximus elit. Praesent blandit leo rutrum augue varius vestibulum. Morbi non elit sit amet libero molestie vehicula. Pellentesque elementum molestie vulputate. Vestibulum commodo at orci molestie pretium. Proin dignissim vitae quam eget tempus. Quisque elementum nisi a suscipit vulputate.
+Morbi gravida fringilla vulputate. Aliquam facilisis sem feugiat, sollicitudin arcu sit amet, sodales augue. Vestibulum a lorem luctus, congue nunc at, pretium nulla. Curabitur tincidunt eros sit amet [P:I foo="bar" baz="qux"] tincidunt egestas. Aenean ac mattis lacus, eu efficitur eros. Pellentesque massa lectus, sodales sed erat quis, facilisis maximus elit. Praesent blandit leo rutrum augue varius vestibulum. Morbi non elit sit amet libero molestie vehicula. Pellentesque elementum molestie vulputate. Vestibulum commodo at orci molestie pretium. Proin dignissim vitae quam eget tempus. Quisque elementum nisi a suscipit vulputate.
 
 ## And an H2
 

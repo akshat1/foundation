@@ -4,13 +4,29 @@ import path from "path";
 
 describe("getPatrika", () => {
   let patrika: Patrika;
+  const onShortCode = jest.fn(async (args) => {
+    return `<span>OnShortCode Called With Args ${JSON.stringify(args)}</span>`;
+  });
+  
 
   beforeAll(async () => {
     patrika = await getPatrika({
-      postsGlob: path.join(__dirname, "fixtures", "content", "posts", "**", "*.md"),
-      pagesGlob: path.join(__dirname, "fixtures", "content", "pages", "**", "*.md"),
+      postsGlob: path.join(process.cwd(), "src", "fixtures", "content", "posts", "**", "*.md"),
+      pagesGlob: path.join(process.cwd(), "src", "fixtures", "content", "pages", "**", "*.md"),
       getSlug: ({ filePath, attributes }) => attributes.title || path.basename(filePath).replace(/\.md$/, ""),
+      onShortCode,
     });
+  });
+
+  test("onShortcode should be called when the shortcode is encountered.", async () => {
+    // This is rather delicate test because only one of the files contains the shortcode at this
+    // moment. If we ever add the shortcode to another file, this test will need to be updated.
+    expect(onShortCode).toBeCalledTimes(1);
+  });
+
+  test("Item.body should include the return value from onShortCode", async () => {
+    const item = (await patrika.find({ id: "fourth-one" }))[0];
+    expect(item.body).toContain('<span>OnShortCode Called With Args {"foo":"bar","baz":"qux"}</span>');
   });
 
   test("Patrika should expose the expected API", () => {

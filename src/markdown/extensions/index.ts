@@ -1,10 +1,7 @@
-import { getPostDataExtension, GetPostDataExtensionArgs } from "./postData";
-import { getPostLinkExtension } from "./postLink";
-import { marked } from "marked";
+/* eslint-disable @typescript-eslint/no-empty-function */
+import { getExtension } from "./inline";
+import { MarkedExtensionAsPerDocs } from "./MarkedExtensionAsPerDocs";
 
-type GetExtensionsArgs = GetPostDataExtensionArgs
-
-export const getExtensions = (args: GetExtensionsArgs): marked.MarkedExtension[] => [
-  getPostDataExtension(args),
-  getPostLinkExtension(args),
-];
+export function getExtensions (): MarkedExtensionAsPerDocs[] {
+  return [getExtension()];
+}
