@@ -2,7 +2,7 @@
 
 ### Patrikā (पत्रिका):—(nf) a magazine; journal.
 
-A utility to read a collection of Markdown files and associated HTML. Intended to be used with site renderer of your choice. It could be a static site renderer, or even a client side renderer where you put behind (say) an Express wrapper.
+A utility to read a collection of Markdown files and associated HTML. Intended to be used with the site renderer of your choice.
 
 ## Requirements
 
