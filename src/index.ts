@@ -13,6 +13,7 @@ export {
   FrontMatterAttributes,
   Patrika,
   OnShortCode,
+  GetSlug,
 };
 
 export interface GetPatrikaArgs {
