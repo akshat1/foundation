@@ -17,32 +17,30 @@
     "test": "jest",
     "sandbox": "ts-node ./sandbox.ts"
   },
+  "dependencies": {
+    "@akshat1/js-logger": "^1.0.2",
+    "command-line-args": "^6.0.0",
+    "command-line-usage": "^7.0.3",
+    "excerpt-html": "^1.2.2",
+    "express-ws": "^5.0.2",
+    "express": "^4.19.2",
+    "front-matter": "^4.0.2",
+    "glob": "^11.0.0",
+    "js-beautify": "^1.15.1",
+    "less": "^4.2.0",
+    "marked": "^12.0.0",
+    "parseurl": "^1.3.3",
+    "picodb": "^1.0.5",
+    "slugify": "^1.6.6"
+  },
   "devDependencies": {
-    "@tsconfig/node16": "^1.0.3",
-    "@types/glob": "^8.0.0",
-    "@types/jest": "^29.2.4",
-    "@types/jsdom": "^21.1.0",
-    "@types/node": "^18.11.9",
-    "@typescript-eslint/eslint-plugin": "^5.51.0",
-    "@typescript-eslint/parser": "^5.51.0",
-    "eslint": "^9.0.0",
+    "@types/node": "^22.5.4",
+    "@typescript-eslint/eslint-plugin": "^6.19.1",
+    "@typescript-eslint/parser": "^6.19.1",
+    "eslint": "^8.56.0",
     "eslint-import-resolver-typescript": "^3.6.1",
     "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-jest": "^28.2.0",
-    "eslint-plugin-simple-import-sort": "^12.1.0",
-    "jest": "^29.7.0",
-    "mocha": "^10.1.0",
-    "ts-jest": "^29.1.2",
-    "ts-mocha": "^10.0.0",
-    "typedoc": "^0.23.19",
-    "typescript": "^4.8.4"
-  },
-  "dependencies": {
-    "excerpt-html": "^1.2.2",
-    "front-matter": "^4.0.2",
-    "glob": "^8.0.3",
-    "js-beautify": "^1.15.1",
-    "marked": "^12.0.0",
-    "picodb": "^1.0.5"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
   }
 }
