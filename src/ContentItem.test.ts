@@ -3,9 +3,10 @@ import { comparePostsByPublishedDate } from "./ContentItem";
 import { FrontMatterAttributes } from "./front-matter";
 import assert from "assert";
 import { FrontMatterResult } from "front-matter";
+import { test, suite } from "node:test";
 
-describe("ContentItem", () => {
-  describe("comparePostsByPublishedDate", () => {
+suite("ContentItem", () => {
+  suite("comparePostsByPublishedDate", () => {
     const FakeItemStub: ContentItem = {
       authors: [],
       body: "",
@@ -26,27 +27,27 @@ describe("ContentItem", () => {
       publishDate,
     });
   
-    it("should return 0 when a and b are the same", () => {
+    test("should return 0 when a and b are the same", () => {
       const a = makeFakeItem("2023-01-01");
       const b = makeFakeItem("2023-01-01");
       assert.equal(comparePostsByPublishedDate(a, b), 0);
     });
   
-    it("should return > 0 when a is older than b", () => {
+    test("should return > 0 when a is older than b", () => {
       const a = makeFakeItem("2023-01-01");
       const b = makeFakeItem("2023-02-01");
       assert.equal(comparePostsByPublishedDate(a, b) > 0, true);
     });
   
-    it("should return < 0 when a is newer than b", () => {
+    test("should return < 0 when a is newer than b", () => {
       const a = makeFakeItem("2023-02-01");
       const b = makeFakeItem("2023-01-01");
       assert.equal(comparePostsByPublishedDate(a, b) < 0, true);
     });
   });
 
-  describe("getPublishDate", () => {
-    it("should return the date from front matter attributes when present", () => {
+  suite("getPublishDate", () => {
+    test("should return the date from front matter attributes when present", () => {
       const args = {
         attributes: { publishDate: "2020-03-02" },
         stats: { ctime: new Date("2021-01-01").toUTCString() },
@@ -56,7 +57,7 @@ describe("ContentItem", () => {
       assert.equal(actualDate, "2020-03-02");
     });
 
-    it("should return the date from file states when missing from attributes", () => {
+    test("should return the date from file states when missing from attributes", () => {
       const args = {
         attributes: {},
         stats: { ctime: new Date("2021-01-01").toUTCString() },
@@ -66,7 +67,7 @@ describe("ContentItem", () => {
       assert.equal(actualDate, "2021-01-01");
     });
 
-    it("should return null when published date is missing from attributes, and ctime is missing from stats", () => {
+    test("should return null when published date is missing from attributes, and ctime is missing from stats", () => {
       const args = {
         attributes: {},
         stats: {},
@@ -77,8 +78,8 @@ describe("ContentItem", () => {
     });
   });
 
-  describe("toContentItem", () => {
-    it("should return a well formed ContentItem", () => {
+  suite("toContentItem", () => {
+    test("should return a well formed ContentItem", () => {
       const authors = ["foo", "bar"];
       const id = "post-42";
       const publishDate = "2023-01-01";
