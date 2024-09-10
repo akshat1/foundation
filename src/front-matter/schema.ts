@@ -15,16 +15,17 @@ export interface FrontMatterAttributes {
 }
 
 const DatePattern = /\d{4}-\d{1,2}-\d{1,2}/;
-type ValidatorFunc = (obj: Record<string, any>) => boolean;
+type ValidatorFunc = (obj: FrontMatterAttributes) => boolean;
 type Schema = Record<string, ValidatorFunc>;
 const FMDataSchema: Schema = {
   id: obj => typeof obj.id === "string",
   authors: obj => Boolean(Array.isArray(obj.authors) && obj.authors.length),
   title: obj => typeof obj.title === "string",
+  /// @ts-ignore
   publishDate: obj => ((obj.publishDate instanceof Date) || (typeof obj.publishDate === "string" && DatePattern.test(obj.publishDate))),
 };
 
-const doValidate = (schema: Schema, data: Record<string, any>): string[] => {
+const doValidate = (schema: Schema, data: FrontMatterAttributes): string[] => {
   const missingFields: string[] = [];
   for (const key in schema) {
     if (!schema[key](data)) {

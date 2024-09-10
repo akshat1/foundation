@@ -1,7 +1,7 @@
 {
   "name": "@akshat1/patrika",
-  "version": "0.5.3",
-  "description": "An API to serve content stored in markdown files on disk. Intended to serve as the data layer for lightweight static site generators such as Pequeno.",
+  "version": "0.6.0",
+  "description": "Patrika is a static site generator. It reads markdown files and generates a static website using a user supplied `renderToString(ContentItem, Patrika) => Promise<string | string[]>` function. Patrika is minimal and framework agnostic, meant to be used with your favorite front-end framework.",
   "main": "lib/index.js",
   "repository": "git@github.com:akshat1/patrika.git",
   "author": "akshat1 <akshat.sh@gmail.com>",
@@ -9,21 +9,24 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
+  "bin": {
+    "patrika": "./bin/patrika.js"
+  },
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf lib/ coverage/",
     "docs": "typedoc",
     "prepare": "yarn run clean; yarn run build",
-    "test": "tsc && node --test lib/**/*.test.js",
-    "sandbox": "ts-node ./sandbox.ts"
+    "lint": "eslint . --ext .ts",
+    "test": "tsc && node --test lib/**/*.test.js"
   },
   "dependencies": {
     "@akshat1/js-logger": "^1.0.2",
     "command-line-args": "^6.0.0",
     "command-line-usage": "^7.0.3",
     "excerpt-html": "^1.2.2",
-    "express-ws": "^5.0.2",
     "express": "^4.19.2",
+    "express-ws": "^5.0.2",
     "front-matter": "^4.0.2",
     "glob": "^11.0.0",
     "js-beautify": "^1.15.1",

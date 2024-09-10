@@ -1,6 +1,6 @@
-import { start, tokenizer } from "./inline";
 import assert from "node:assert";
 import { test, suite, } from "node:test";
+import { start, tokenizer } from "./inline";
 
 suite("start", () => {
   test("should return the index of the next potential start of the custom token", () => {

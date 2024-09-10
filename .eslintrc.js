@@ -1,43 +1,23 @@
 module.exports = {
-  root: true,
   parser: "@typescript-eslint/parser",
   plugins: [
     "@typescript-eslint",
     "import",
-    "simple-import-sort",
-    "jest",
   ],
   extends: [
-    "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
   ],
   rules: {
+    quotes: ["error", "double", { avoidEscape: true }],
     "@typescript-eslint/ban-ts-comment": "off",
-    "@typescript-eslint/ban-types": "off",
-    "@typescript-eslint/no-explicit-any": "off",
-    "comma-dangle": ["error", "always-multiline"],
-    "import/default": "error",
-    "import/extensions": ["error", "never"],
-    "import/named": "error",
-    "import/no-absolute-path": "error",
-    "import/no-default-export": "error",
-    "no-useless-escape": "off",
-    "simple-import-sort/imports": ["error", { groups: [] }],
-    quotes: ["error", "double", { "avoidEscape": true }],
-    curly: ["error", "all"],
+    "import/order": ["warn", { alphabetize: { order: "asc" } }],
   },
   settings: {
     "import/resolver": {
-      typescript: {
-        alwaysTryTypes: true,
-      },
+      typescript: true,
+      node: true,
     },
-  },
-  env: {
-    node: true,
-    es6: true,
-    browser: true,
-    mocha: true,
-    "jest/globals": true,
   },
 };

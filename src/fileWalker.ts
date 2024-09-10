@@ -1,8 +1,8 @@
-import { ContentItem, ContentItemType, toContentItem } from "./ContentItem";
-import { getFMData } from "./front-matter";
-import { GetSlug } from "./GetSlug";
-import { glob } from "glob";
 import fs from "node:fs/promises";
+import { glob } from "glob";
+import { ContentItem, ContentItemType, toContentItem } from "./ContentItem";
+import { GetSlug } from "./GetSlug";
+import { getFMData } from "./front-matter";
 
 interface FileWalkerArgs {
   globPattern: string;

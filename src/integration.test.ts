@@ -1,8 +1,8 @@
-import { getPatrika } from ".";
-import { Patrika } from "./Patrika";
-import path from "path";
 import assert from "node:assert";
 import { test, suite, mock, before } from "node:test";
+import path from "path";
+import { Patrika } from "./Patrika";
+import { getPatrika } from ".";
 
 suite("getPatrika", () => {
   let patrika: Patrika;

@@ -1,9 +1,8 @@
-import { ContentItem, ContentItemType, getPublishDate, toContentItem, ToContentItemArgs } from "./ContentItem";
-import { comparePostsByPublishedDate } from "./ContentItem";
-import { FrontMatterAttributes } from "./front-matter";
 import assert from "assert";
-import { FrontMatterResult } from "front-matter";
 import { test, suite } from "node:test";
+import { FrontMatterResult } from "front-matter";
+import { ContentItem, ContentItemType, getPublishDate, toContentItem, ToContentItemArgs , comparePostsByPublishedDate } from "./ContentItem";
+import { FrontMatterAttributes } from "./front-matter";
 
 suite("ContentItem", () => {
   suite("comparePostsByPublishedDate", () => {
@@ -13,6 +12,7 @@ suite("ContentItem", () => {
       collections: [],
       draft: false,
       excerpt: {},
+      /// @ts-ignore
       frontMatter: {},
       id: "",
       markdown: "",

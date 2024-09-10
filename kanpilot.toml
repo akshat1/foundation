@@ -1,0 +1,61 @@
+name = "Patrika"
+skipFolders = [ "node_modules", ".vscode", "out", "dist", ".vscode-test" ]
+skipFiles = [ ".gitignore", "package.json" ]
+
+[[processes]]
+id = "process1"
+name = "To Do"
+
+  [[processes.tasks]]
+  id = "go0ac2kef3682q5m9jrns0x2"
+  title = "Accept string[] from renderToString in order to handle pagination."
+  description = ""
+  tag = "backlog"
+  linkFiles = [ ]
+  dueDate = ""
+  checkList = [ ]
+  priority = ""
+  linkCommits = [ ]
+
+  [[processes.tasks]]
+  id = "xavnrf4ccgjvaau990dl5lsj"
+  title = "Externalize output file path logic"
+  description = "Currently, patrika-runner determines output file names. But it might be better to have that logic be specifid by the template. This relates to the pagination task."
+  tag = "backlog"
+  linkFiles = [ ]
+  dueDate = ""
+  checkList = [ ]
+  priority = ""
+  linkCommits = [ ]
+
+  [[processes.tasks]]
+  id = "h5hth4j5oya1o0m4cyw928s1"
+  title = "fmData.publishDate - string or Date?"
+  description = "<p>Find out where fmData.publishDate is being converted from string to Date; and decide whether we want it to be a Date after all. Update the interface or code accordingly.</p>"
+  tag = "bug"
+  linkFiles = [ ]
+  dueDate = ""
+  checkList = [ ]
+  priority = ""
+  linkCommits = [ ]
+
+  [[processes.tasks]]
+  id = "u8rg6yhm1mxx4ix7yzhxafnw"
+  title = "Write more tests before the lack of tests gets in the way of refactoring."
+  description = ""
+  tag = "backlog"
+  linkFiles = [ ]
+  dueDate = ""
+  checkList = [ ]
+  priority = ""
+  linkCommits = [ ]
+
+[[processes]]
+id = "process2"
+name = "In Progress"
+tasks = [ ]
+
+[[processes]]
+id = "process3"
+name = "Done"
+tasks = [ ]

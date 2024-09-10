@@ -1,7 +1,7 @@
-import { FrontMatterAttributes } from "./front-matter";
-import { GetSlug } from "./GetSlug";
-import { FrontMatterResult } from "front-matter";
 import { Stats } from "fs";
+import { FrontMatterResult } from "front-matter";
+import { GetSlug } from "./GetSlug";
+import { FrontMatterAttributes } from "./front-matter";
 
 export enum ContentItemType {
   Page = "page",
@@ -35,7 +35,7 @@ export interface ContentItem {
   tags: string[];
   title: string;
   type: ContentItemType;
-  frontMatter: Record<string, any>;
+  frontMatter: FrontMatterAttributes;
 }
 
 export const comparePostsByPublishedDate = (a: ContentItem, b: ContentItem): number => {
@@ -44,7 +44,7 @@ export const comparePostsByPublishedDate = (a: ContentItem, b: ContentItem): num
   return dB - dA;
 };
 
-export const getPublishDate = (args: { attributes: Record<string, any>, stats: Stats }): string|null => {
+export const getPublishDate = (args: { attributes: FrontMatterAttributes, stats: Stats }): string|null => {
   const strDate = args.attributes?.publishDate || args.stats.ctime;
   if (strDate) {
     const date = new Date(strDate);
