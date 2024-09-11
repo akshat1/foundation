@@ -1,6 +1,6 @@
 import assert from "assert";
 import { test, suite } from "node:test";
-import { validate } from "./schema";
+import { validate } from "./schema.js";
 
 suite("validate", () => {
   test("should return an empty array when validation is succesful", () => {
