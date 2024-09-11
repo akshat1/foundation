@@ -1,20 +1,20 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { getLogger } from "@akshat1/js-logger";
-import { ContentItem, Patrika } from "../";
-import { getRunnerConfig } from "./getConfiguration";
-import { getFilePath } from "./getFilePath";
+import { ContentItem, Patrika } from "../index.js";
+import { getRunnerConfig } from "./getConfiguration.js";
+import { getFilePath } from "./getFilePath.js";
 
 const reloadTemplate = async () => {
   // Need to bust the require cache. This is clunky, but I don't know of a better way ATM.
   // We are going to remove all files that live under this module.
   const { template } = await getRunnerConfig();
-  const stub = path.dirname(require.resolve(template)); // Clear from dirname to account for imported siblings.
-  for (const key in require.cache) {
-    if (key.startsWith(stub)) {
-      delete require.cache[key];
-    }
-  }
+  // const stub = path.dirname(require.resolve(template)); // Clear from dirname to account for imported siblings.
+  // for (const key in require.cache) {
+  //   if (key.startsWith(stub)) {
+  //     delete require.cache[key];
+  //   }
+  // }
   // And now we load a fresh copy of the template. Note that two elements are required; query param to the import, and
   // the delete require.cache[...] operation above.
   const { renderToString } = await import(template + "?t=" + Date.now());

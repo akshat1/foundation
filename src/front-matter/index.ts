@@ -1,5 +1,5 @@
 import frontmatter, { FrontMatterResult } from "front-matter";
-import { FrontMatterAttributes, validate } from "./schema";
+import { FrontMatterAttributes, validate } from "./schema.js";
 
 export { FrontMatterAttributes };
 

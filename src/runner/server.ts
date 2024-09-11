@@ -6,11 +6,12 @@
 
 import fs from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { getLogger } from "@akshat1/js-logger";
 import express, { RequestHandler } from "express";
 import ExpressWS from "express-ws";
 import parseurl from "parseurl";
-import { getRunnerConfig } from "./getConfiguration";
+import { getRunnerConfig } from "./getConfiguration.js";
 
 const ServerConf = {
   port: "3000",
@@ -22,6 +23,8 @@ const getClientScriptAddition = async (): Promise<string> => {
     return scriptTextAddition;
   }
   
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
   const clientScriptPath = path.join(__dirname, "..", "assets", "client-script.js"); // @TODO Need a better mechanism for doing this.
   try {
     scriptTextAddition = 
@@ -80,6 +83,7 @@ const getContent = async (reqPath: string): Promise<ContentResponse> => {
       const error = new Error(`ENOENT: no such file or directory, open '${filePath}'`);
       /// @ts-ignore
       error.code = "ENOENT";
+      throw error;
     }
   }
 
@@ -127,6 +131,7 @@ const staticServer: RequestHandler = async (req, res, next) => {
       res.send(responseBody);
     } catch (err) {
       logger.error("Caught Error", err);
+      console.error(err);
       if (err.code === "ENOENT") {
         res.status(404).send("Not Found");
       } else {

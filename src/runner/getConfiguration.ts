@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { getCommandLineOptions } from "./commandLineArgs";
+import { getCommandLineOptions } from "./commandLineArgs.js";
 
 export interface RunnerConfiguration {
   lessDir: string;

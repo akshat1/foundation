@@ -6,13 +6,15 @@
   "repository": "git@github.com:akshat1/patrika.git",
   "author": "akshat1 <akshat.sh@gmail.com>",
   "license": "MIT",
+  "type": "module",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://warehouse.akshatmedia.com/"
   },
   "bin": {
     "patrika": "./bin/patrika.js"
   },
   "scripts": {
+    "dev": "tsc --watch",
     "build": "tsc",
     "clean": "rm -rf lib/ coverage/",
     "docs": "typedoc",
@@ -21,7 +23,7 @@
     "test": "tsc && node --test lib/**/*.test.js"
   },
   "dependencies": {
-    "@akshat1/js-logger": "^1.0.2",
+    "@akshat1/js-logger": "^2.0.2",
     "command-line-args": "^6.0.0",
     "command-line-usage": "^7.0.3",
     "excerpt-html": "^1.2.2",

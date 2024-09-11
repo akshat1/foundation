@@ -1,8 +1,8 @@
 import fs from "node:fs/promises";
 import { glob } from "glob";
-import { ContentItem, ContentItemType, toContentItem } from "./ContentItem";
-import { GetSlug } from "./GetSlug";
-import { getFMData } from "./front-matter";
+import { ContentItem, ContentItemType, toContentItem } from "./ContentItem.js";
+import { GetSlug } from "./GetSlug.js";
+import { getFMData } from "./front-matter/index.js";
 
 interface FileWalkerArgs {
   globPattern: string;

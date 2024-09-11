@@ -1,11 +1,11 @@
 import PicoDB from "picodb";
-import { comparePostsByPublishedDate,ContentItem, ContentItemType } from "./ContentItem";
-import { GetSlug } from "./GetSlug";
-import { Patrika } from "./Patrika";
-import { fileWalker } from "./fileWalker";
-import { FrontMatterAttributes } from "./front-matter";
-import { renderAllMarkdown } from "./markdown";
-import { OnShortCode } from "./markdown/extensions/OnShortCode";
+import { comparePostsByPublishedDate,ContentItem, ContentItemType } from "./ContentItem.js";
+import { GetSlug } from "./GetSlug.js";
+import { Patrika } from "./Patrika.js";
+import { fileWalker } from "./fileWalker.js";
+import { FrontMatterAttributes } from "./front-matter/index.js";
+import { OnShortCode } from "./markdown/extensions/OnShortCode.js";
+import { renderAllMarkdown } from "./markdown/index.js";
 
 export {
   ContentItemType,

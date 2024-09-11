@@ -5,13 +5,17 @@
       "./node_modules/@types"
     ],
     "declaration": true,
-    "esModuleInterop": true,
-    "lib": ["ESNext"],
+    "lib": ["ESNext", "DOM"],
     "outDir": "lib",
     "target": "ESNext",
-    "moduleResolution": "NodeNext",
-    "module": "NodeNext"
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "esModuleInterop": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "lib", "assets"]
+  "exclude": ["node_modules", "lib", "assets"],
+  "typedocOptions": {
+    "out": "docs",
+    "exclude": "**/node_modules/**/*"
+  }
 }

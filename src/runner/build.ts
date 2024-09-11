@@ -1,10 +1,10 @@
 import path from "node:path";
 import { getLogger } from "@akshat1/js-logger";
 import slugify from "slugify";
-import { ContentItemType, getPatrika } from "../";
-import { buildStyle } from "./buildStyle";
-import { getRunnerConfig } from "./getConfiguration";
-import { renderAllContentItems } from "./renderAllContentItems";
+import { ContentItemType, getPatrika } from "../index.js";
+import { buildStyle } from "./buildStyle.js";
+import { getRunnerConfig } from "./getConfiguration.js";
+import { renderAllContentItems } from "./renderAllContentItems.js";
 
 const logger = getLogger("build");
 let isBuilding = false;

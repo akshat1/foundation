@@ -1,9 +1,9 @@
 import { getLogger } from "@akshat1/js-logger";
-import { build } from "./build";
-import { doCommandLineValidation, getCommandLineOptions } from "./commandLineArgs";
-import { debounce } from "./debounce";
-import { getRunnerConfig } from "./getConfiguration";
-import { watch } from "./watch";
+import { build } from "./build.js";
+import { doCommandLineValidation, getCommandLineOptions } from "./commandLineArgs.js";
+import { debounce } from "./debounce.js";
+import { getRunnerConfig } from "./getConfiguration.js";
+import { watch } from "./watch.js";
 
 const logger = getLogger("runner-main");
 // Main will be imported by bin/index.js

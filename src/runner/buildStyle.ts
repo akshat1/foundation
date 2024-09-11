@@ -3,8 +3,8 @@ import path from "node:path";
 import { getLogger } from "@akshat1/js-logger";
 import { glob } from "glob";
 import less from "less";
-import { ensureDirectory } from "./ensureDirectory";
-import { getRunnerConfig } from "./getConfiguration";
+import { ensureDirectory } from "./ensureDirectory.js";
+import { getRunnerConfig } from "./getConfiguration.js";
 
 /**
  * @param srcFile - Absolute path to the less file

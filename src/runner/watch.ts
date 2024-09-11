@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import { getLogger } from "@akshat1/js-logger";
-import { getRunnerConfig } from "./getConfiguration";
+import { getRunnerConfig } from "./getConfiguration.js";
 
 const logger = getLogger("watch");
 /**

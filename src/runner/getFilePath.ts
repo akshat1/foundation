@@ -1,7 +1,7 @@
 import path from "node:path";
-import { ContentItem, ContentItemType } from "../";
-import { MagicID } from "./Constants";
-import { RunnerConfiguration } from "./getConfiguration";
+import { ContentItem, ContentItemType } from "../index.js";
+import { MagicID } from "./Constants.js";
+import { RunnerConfiguration } from "./getConfiguration.js";
 
 // https://www.akshatsharma.com/2016/7/18/SPS-Final-(For-Now)-Update.html
 // year/month/day/slug.html
