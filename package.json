@@ -20,7 +20,7 @@
     "docs": "typedoc",
     "prepare": "yarn run clean; yarn run build",
     "lint": "eslint . --ext .ts",
-    "test": "tsc && node --test lib/**/*.test.js"
+    "test": "node --test lib/**/*.test.js"
   },
   "dependencies": {
     "@akshat1/js-logger": "^2.0.2",

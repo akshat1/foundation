@@ -8,27 +8,23 @@ on:
 jobs:
   build:
     name: Test
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [21.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+    runs-on: ubuntu-24.04
 
     steps:
       - uses: actions/checkout@v3
         name: Checkout
-      - uses: borales/actions-yarn@v3.0.0
+      - uses: borales/actions-yarn@v4
         name: Install Dependencies
         with:
-            cmd: install
-      # - uses: borales/actions-yarn@v3.0.0
-      #   name: Lint
-      #   with:
-      #     cmd: lint # will run `yarn lint` command
-      - uses: borales/actions-yarn@v3.0.0
+          cmd: install
+      - uses: borales/actions-yarn@v4
+        name: Lint
         with:
-          cmd: test # will run `yarn test` command
-      - uses: borales/actions-yarn@v3.0.0
+          cmd: lint
+      - uses: borales/actions-yarn@v4
         name: Build
         with:
-          cmd: build # will run `yarn build` command
+          cmd: build
+      - uses: borales/actions-yarn@v4
+        with:
+          cmd: test
