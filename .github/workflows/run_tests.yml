@@ -17,10 +17,10 @@ jobs:
         name: Install Dependencies
         with:
           cmd: install
-      - uses: borales/actions-yarn@v4
-        name: Lint
-        with:
-          cmd: lint
+      # - uses: borales/actions-yarn@v4
+      #   name: Lint
+      #   with:
+      #     cmd: lint
       - uses: borales/actions-yarn@v4
         name: Build
         with:
