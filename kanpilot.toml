@@ -7,17 +7,6 @@ id = "process1"
 name = "To Do"
 
   [[processes.tasks]]
-  id = "go0ac2kef3682q5m9jrns0x2"
-  title = "Accept string[] from renderToString in order to handle pagination."
-  description = ""
-  tag = "backlog"
-  linkFiles = [ ]
-  dueDate = ""
-  checkList = [ ]
-  priority = ""
-  linkCommits = [ ]
-
-  [[processes.tasks]]
   id = "xavnrf4ccgjvaau990dl5lsj"
   title = "Externalize output file path logic"
   description = "Currently, patrika-runner determines output file names. But it might be better to have that logic be specifid by the template. This relates to the pagination task."
@@ -53,7 +42,33 @@ name = "To Do"
 [[processes]]
 id = "process2"
 name = "In Progress"
-tasks = [ ]
+
+  [[processes.tasks]]
+  id = "go0ac2kef3682q5m9jrns0x2"
+  title = "Accept string[] from renderToString in order to handle pagination."
+  description = ""
+  tag = "backlog"
+  linkFiles = [ ]
+  dueDate = ""
+  checkList = [ ]
+  priority = ""
+  linkCommits = [ ]
+
+  [[processes.tasks]]
+  id = "ceyck8v9lkc9dpr954ck63sh"
+  title = "Both getSlug and getURL should be supplied by the template."
+  description = """
+`getURL` and `getSlug` should both be supplied by the template. Patrika should then figure out the output file path by concatenating the url (from getURL) to conf.outDir.
+
+This is required because
+1. Patrika should not be determining the output URL structure.
+2. This would be useful for things like the fanout concept which I'm exploring for generating ad-hoc pages without corresponding md files; such as for creating individual HTML files for each tag."""
+  tag = "backlog"
+  linkFiles = [ ]
+  dueDate = ""
+  checkList = [ ]
+  priority = ""
+  linkCommits = [ ]
 
 [[processes]]
 id = "process3"

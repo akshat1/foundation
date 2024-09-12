@@ -5,6 +5,7 @@ import { ContentItemType, getPatrika } from "../index.js";
 import { buildStyle } from "./buildStyle.js";
 import { getRunnerConfig } from "./getConfiguration.js";
 import { renderAllContentItems } from "./renderAllContentItems.js";
+import { flushTemplate, loadTemplate } from "../Template.js";
 
 const logger = getLogger("build");
 let isBuilding = false;
@@ -18,10 +19,11 @@ export const build = async () => {
   isBuilding = true;
 
   const conf = await getRunnerConfig();
+  flushTemplate();
   const patrika = await getPatrika({
     pagesGlob: conf.pagesGlob,
     postsGlob: conf.postsGlob,
-    getSlug: ({ filePath, attributes }) => (attributes?.title ?? slugify(path.basename(filePath).replace(/\.md$/, ""))).toLowerCase(),
+    getSlug: (await loadTemplate()).getSlug,
     // onShortCode, // This should be from the template.
   });
 

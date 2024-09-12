@@ -3,6 +3,7 @@ import { glob } from "glob";
 import { ContentItem, ContentItemType, toContentItem } from "./ContentItem.js";
 import { GetSlug } from "./GetSlug.js";
 import { getFMData } from "./front-matter/index.js";
+import { getRunnerConfig } from "./runner/getConfiguration.js";
 
 interface FileWalkerArgs {
   globPattern: string;
@@ -16,22 +17,24 @@ export const fileWalker = async (args: FileWalkerArgs): Promise<ContentItem[]> =
     getSlug,
     type,
   } = args;
-  const filePaths = await glob(globPattern);
+  const conf = await getRunnerConfig();
+  const sourceFilePaths = await glob(globPattern);
   const items = [];
-  for (const filePath of filePaths) {
-    const stats = await fs.stat(filePath);
+  for (const sourceFilePath of sourceFilePaths) {
+    const stats = await fs.stat(sourceFilePath);
     if (!stats.isFile()) {
       continue;
     }
 
-    const markdown = (await fs.readFile(filePath)).toString();
-    const fmData = getFMData({ markdown, filePath });
+    const markdown = (await fs.readFile(sourceFilePath)).toString();
+    const fmData = getFMData({ markdown, filePath: sourceFilePath });
     const item = toContentItem({
-      filePath,
+      sourceFilePath,
       stats,
       fmData,
       getSlug,
       type,
+      conf,
     });
 
     items.push(item);

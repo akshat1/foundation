@@ -1,7 +1,9 @@
 import { Stats } from "fs";
 import { FrontMatterResult } from "front-matter";
 import { GetSlug } from "./GetSlug";
-import { FrontMatterAttributes } from "./front-matter";
+import { FrontMatterAttributes } from "./front-matter/index.js";
+import { RunnerConfiguration } from "./runner/getConfiguration.js";
+import { getFilePath } from "./runner/getFilePath.js";
 
 export enum ContentItemType {
   Page = "page",
@@ -36,6 +38,9 @@ export interface ContentItem {
   title: string;
   type: ContentItemType;
   frontMatter: FrontMatterAttributes;
+  url: string;
+  sourceFilePath: string;
+  filePath: string;
 }
 
 export const comparePostsByPublishedDate = (a: ContentItem, b: ContentItem): number => {
@@ -57,18 +62,28 @@ export const getPublishDate = (args: { attributes: FrontMatterAttributes, stats:
 export interface ToContentItemArgs {
   fmData: FrontMatterResult<FrontMatterAttributes>,
   getSlug: GetSlug,
-  filePath: string,
+  sourceFilePath: string,
   stats: Stats,
   type: ContentItemType,
+  conf: RunnerConfiguration,
 }
 
+/**
+ * @TODO: Clean this (and associated code in other files) up. Right now we have some repetition and some peanut
+ * buttering of logic into multiple modules. Can we get rid of some partial types and just pass around a dummy item
+ * which gets progressively filled up? Similar to what we did for getFilePath?
+ *
+ * @param args 
+ * @returns 
+ */
 export const toContentItem = (args: ToContentItemArgs): ContentItem => {
   const {
-    filePath,
+    sourceFilePath,
     fmData,
     getSlug,
     stats,
     type,
+    conf,
   } = args;
 
   const {
@@ -88,8 +103,10 @@ export const toContentItem = (args: ToContentItemArgs): ContentItem => {
   } = attributes;
 
   const publishDate = getPublishDate({ attributes, stats });
-
-  return {
+  const item = {
+    sourceFilePath,
+    filePath: "pending",
+    url: "pending",
     authors,
     collections,
     draft,
@@ -101,7 +118,7 @@ export const toContentItem = (args: ToContentItemArgs): ContentItem => {
     markdown,
     publishDate,
     slug: getSlug({
-      filePath,
+      filePath: sourceFilePath,
       attributes: { ...fmData.attributes, publishDate },
       type,
     }),
@@ -109,4 +126,9 @@ export const toContentItem = (args: ToContentItemArgs): ContentItem => {
     title,
     type,
   };
+
+  item.filePath = getFilePath(item, conf);
+  item.url = item.filePath.replace(conf.outDir, "");
+
+  return item;
 };

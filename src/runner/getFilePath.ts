@@ -22,7 +22,7 @@ const getPostFilePath = (item: ContentItem, conf: RunnerConfiguration) => {
   );
 }
 
-const getPageFilePath = (item: ContentItem, conf: RunnerConfiguration) => {
+const getPageFilePath = (item: ContentItem, conf: RunnerConfiguration, index?: number): string => {
   const {
     id,
     slug,
@@ -33,18 +33,25 @@ const getPageFilePath = (item: ContentItem, conf: RunnerConfiguration) => {
   if (id === MagicID.SiteIndex) {
     parts.push("index.html");
   } else {
-    parts.push(path.join(slug, "index.html"));
+    const fileName = index ? `index-${index}.html` : "index.html";
+    parts.push(path.join(slug, fileName));
   }
 
   return path.join(...parts);
 };
 
-export const getFilePath = (item: ContentItem, conf: RunnerConfiguration): string => {
+/**
+ * @param item - The content item for which we want the file path.
+ * @param conf - The runner configuration.
+ * @param index - The index of the item in the list of items. This only comes into play for Pages.
+ * @returns 
+ */
+export const getFilePath = (item: ContentItem, conf: RunnerConfiguration, index?: number): string => {
   switch (item.type) {
     case ContentItemType.Post:
       return getPostFilePath(item, conf);
     case ContentItemType.Page:
-      return getPageFilePath(item, conf);
+      return getPageFilePath(item, conf, index);
     default:
       throw new Error(`Unknown content type: ${item.type}`);
   };
