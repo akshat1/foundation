@@ -5,8 +5,9 @@
   "main": "lib/index.js",
   "repository": "git@github.com:akshat1/patrika.git",
   "author": "akshat1 <akshat.sh@gmail.com>",
-  "license": "MIT",
+  "license": "UNLICENSED",
   "type": "module",
+  "homepage": "https://www.akshatmedia.com/patrika",
   "publishConfig": {
     "registry": "https://warehouse.akshatmedia.com/"
   },

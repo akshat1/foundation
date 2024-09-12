@@ -8,7 +8,7 @@ import { watch } from "./watch.js";
 const logger = getLogger("runner-main");
 // Main will be imported by bin/index.js
 export const main = async () => {
-  doCommandLineValidation();
+  await doCommandLineValidation();
   const conf = await getRunnerConfig();
   const clOptions = getCommandLineOptions();
   logger.debug("Configuration: ", JSON.stringify(conf, null, 2));

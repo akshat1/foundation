@@ -2,11 +2,12 @@ import commandLineArgs from "command-line-args";
 import commandLineUsage from "command-line-usage";
 
 interface CommandLineOptions {
-  help: boolean;
   config: string;
-  verbose: boolean;
-  watch: boolean;
+  help: boolean;
   serve: boolean;
+  verbose: boolean;
+  version: boolean;
+  watch: boolean;
 }
 
 const clOptionDefinitions = [{
@@ -34,13 +35,29 @@ const clOptionDefinitions = [{
   alias: "s",
   type: Boolean,
   description: "Start a live reloading server. This also implies --watch (and ocverrides any explicit value for it).",
+}, {
+  name: "version",
+  alias: "V",
+  type: Boolean,
+  description: "Print the version of the runner.",
 }];
+
+let pkgJSON: Record<string, unknown>;
+const getPackageJSON = async () => {
+  if (pkgJSON) {
+    return pkgJSON;
+  }
+
+  /// @ts-ignore
+  pkgJSON = (await import("../../package.json", { with: { type: "json" } })).default;
+  return pkgJSON;
+};
 
 interface PrintUsageHelpArgs {
   errorMessage?: string;
 }
 
-export const printUsageHelp = (args: PrintUsageHelpArgs = {}) => {
+export const printUsageHelp = async (args: PrintUsageHelpArgs = {}) => {
   const { errorMessage } = args;
   const sections: Record<string, unknown>[] = [{
     header: "Patrika Runner",
@@ -62,7 +79,7 @@ export const printUsageHelp = (args: PrintUsageHelpArgs = {}) => {
     optionList: clOptionDefinitions,
   }, {
     header: "Project Information",
-    content: "Project home: https://kabukisolutions.com/patrika",
+    content: `Project home: ${(await getPackageJSON()).homepage}`,
   });
 
   const usage = commandLineUsage(sections);
@@ -82,15 +99,21 @@ export const getCommandLineOptions = (): CommandLineOptions => {
 /**
  * Validate the command line options. Display help or appropriate error messages and exit if needed.
  */
-export const doCommandLineValidation = () => {
+export const doCommandLineValidation = async () => {
   const clOptions = getCommandLineOptions();
   if (clOptions.help) {
-    printUsageHelp();
+    await printUsageHelp();
+    process.exit(0);
+  }
+
+  if (clOptions.version) {
+    const version = (await getPackageJSON()).version;
+    console.log(version);
     process.exit(0);
   }
 
   if (!clOptions.config) {
-    printUsageHelp({ errorMessage: "Configuration file is required." });
+    await printUsageHelp({ errorMessage: "Configuration file is required." });
     process.exit(1);
   }
 };
