@@ -3,7 +3,6 @@ import path from "node:path";
 import { getLogger } from "@akshat1/js-logger";
 import { glob } from "glob";
 import less from "less";
-import { ensureDirectory } from "./ensureDirectory.js";
 import { getRunnerConfig } from "./getConfiguration.js";
 
 /**
@@ -28,7 +27,7 @@ export const buildLessFile = async (srcFile: string, lessDir: string, outDir: st
   try {
     const result = await less.render(contents, lessOpts);
     const destinationPath = getDestinationPath(srcFile, lessDir, outDir);
-    await ensureDirectory(path.dirname(destinationPath));
+    await fs.mkdir(path.dirname(destinationPath));
     logger.debug(`Writing to ${destinationPath}...`);
     await fs.writeFile(destinationPath, result.css);
     logger.debug("Done!");
