@@ -1,33 +1,31 @@
-import { validate } from "./schema";
 import assert from "assert";
+import { test, suite } from "node:test";
+import { validate } from "./schema.js";
 
-describe("validate", () => {
-  it("should return an empty array when validation is succesful", () => {
+suite("validate", () => {
+  test("should return an empty array when validation is succesful", () => {
     const actual = validate({
-      authors: [],
+      authors: ["FOO"],
       id: "foo",
       publishDate: "2022-01-01",
       title: "bar",
     });
 
-    /// @ts-expect-error
-    assert(actual, []);
+    assert.deepEqual(actual, []);
   });
 
-  it("should return the list of missing fields when validation fails", () => {
-    /// @ts-expect-error
-    assert(validate({
+  test("should return the list of missing fields when validation fails", () => {
+    /// @ts-expect-error We are intentionally testing the validation failure
+    assert.deepEqual(validate({
       id: "foo",
-      authors: [],
+      authors: ["Kalam Wali Bai"],
       title: "bar",
-      /// @ts-expect-error
-    }), ["publishedDate"]);
+    }), ["publishDate"]);
 
     /// @ts-expect-error
-    assert(validate({
+    assert.deepEqual(validate({
       id: "foo",
       publishDate: "2022-01-01",
-      /// @ts-expect-error
     }), ["authors", "title"]);
   });
 });

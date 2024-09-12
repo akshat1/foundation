@@ -1,11 +1,11 @@
-import { comparePostsByPublishedDate,ContentItem, ContentItemType } from "./ContentItem";
-import { fileWalker } from "./fileWalker";
-import { FrontMatterAttributes } from "./front-matter";
-import { GetSlug } from "./GetSlug";
-import { renderAllMarkdown } from "./markdown";
-import { OnShortCode } from "./markdown/extensions/OnShortCode";
-import { Patrika } from "./Patrika";
 import PicoDB from "picodb";
+import { comparePostsByPublishedDate,ContentItem, ContentItemType } from "./ContentItem.js";
+import { GetSlug } from "./GetSlug.js";
+import { Patrika } from "./Patrika.js";
+import { fileWalker } from "./fileWalker.js";
+import { FrontMatterAttributes } from "./front-matter/index.js";
+import { OnShortCode } from "./markdown/extensions/OnShortCode.js";
+import { renderAllMarkdown } from "./markdown/index.js";
 
 export {
   ContentItemType,
@@ -94,7 +94,7 @@ export const getPatrika = async (args: GetPatrikaArgs): Promise<Patrika> => {
   const patrika: Patrika = {
     getPosts: async () => db.find({ type: ContentItemType.Post }).toArray(),
     getPages: async () => db.find({ type: ContentItemType.Page }).toArray(),
-    find: (query?: Record<string, any>, projection?: Record<string, unknown>) => db.find(query, projection).toArray(),
+    find: (query?: Record<string, unknown>, projection?: Record<string, unknown>) => db.find(query, projection).toArray(),
     _db: db,
   };
 

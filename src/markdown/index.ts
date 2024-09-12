@@ -1,13 +1,13 @@
-import { ContentItem } from "..";
-import { Patrika } from "../Patrika";
-import { getExtensions } from "./extensions";
-import { OnShortCode } from "./extensions/OnShortCode";
-/// @ts-ignore
 import excerptHTML from "excerpt-html";
-/// @ts-ignore
-import { html } from "js-beautify";
+import JSBeatufiy from "js-beautify";
 import { marked } from "marked";
 import PicoDB from "picodb";
+import { ContentItem } from "..";
+import { Patrika } from "../Patrika.js";
+import { OnShortCode } from "./extensions/OnShortCode.js";
+import { getExtensions } from "./extensions/index.js";
+
+const { html } = JSBeatufiy;
 
 interface RenderAllMarkdownArgs {
   db: PicoDB<ContentItem>;

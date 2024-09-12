@@ -1,23 +1,25 @@
+import assert from "node:assert";
+import { test, suite, } from "node:test";
 import { start, tokenizer } from "./inline";
 
-describe("start", () => {
-  it("should return the index of the next potential start of the custom token", () => {
-    expect(start("This is some [P:I foo=bar] custom markdown")).toBe(13);
-    expect(start("[P:I foo=bar] custom markdown")).toBe(0);
+suite("start", () => {
+  test("should return the index of the next potential start of the custom token", () => {
+    assert.strictEqual(start("This is some [P:I foo=bar] custom markdown"), 13);
+    assert.strictEqual(start("[P:I foo=bar] custom markdown"), 0);
   });
 
-  it("should return undefined if there is no potential start of the custom token", () => {
-    expect(start("This is some regular markdown")).toBeUndefined();
-    expect(start("This is markdown with escaped \\[P:I foo=bar] shortcode.")).toBeUndefined();
-    expect(start("This is markdown with escaped BLAH[P:I foo=bar] shortcode.")).toBeUndefined();
+  test("should return undefined if there is no potential start of the custom token", () => {
+    assert.strictEqual(start("This is some regular markdown"), undefined);
+    assert.strictEqual(start("This is markdown with escaped \\[P:I foo=bar] shortcode."), undefined);
+    assert.strictEqual(start("This is markdown with incorrectly placed BLAH[P:I foo=bar] shortcode."), undefined);
   });
 });
 
-describe("tokenizer", () => {
-  it("should return a custom token with the correct type, raw, text, tokens, and args", () => {
+suite("tokenizer", () => {
+  test("should return a custom token with the correct type, raw, text, tokens, and args", () => {
     const src = "[P:I pa=\"foo\" pb=\"bar\" pc=0 pd=true pe=\"baz\" pf=1.5]";
     const token = tokenizer(src);
-    expect(token).toEqual({
+    assert.deepStrictEqual(token, {
       type: "P:I",
       raw: src,
       text: src,
@@ -33,10 +35,10 @@ describe("tokenizer", () => {
     });
   });
 
-  it("should correctly parse parameter values with various characters", () => {
+  test("should correctly parse parameter values with various characters", () => {
     const src = '[P:I pa="postLink" pb="string-with-dashes" pc="string with escaped \\" quotes" pd=2 pe=3.14 pf=true pg=false]';
     const token = tokenizer(src);
-    expect(token).toEqual({
+    assert.deepStrictEqual(token, {
       type: "P:I",
       raw: src,
       text: src,

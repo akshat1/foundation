@@ -1,11 +1,8 @@
-import { ContentItem, ContentItemType, toContentItem } from "./ContentItem";
-import { getFMData } from "./front-matter";
-import { GetSlug } from "./GetSlug";
-import { glob as callbackGlob } from "glob";
 import fs from "node:fs/promises";
-import { promisify } from "util";
-
-const glob = promisify(callbackGlob);
+import { glob } from "glob";
+import { ContentItem, ContentItemType, toContentItem } from "./ContentItem.js";
+import { GetSlug } from "./GetSlug.js";
+import { getFMData } from "./front-matter/index.js";
 
 interface FileWalkerArgs {
   globPattern: string;

@@ -1,15 +1,17 @@
-import { getPatrika } from ".";
-import { Patrika } from "./Patrika";
+import assert from "node:assert";
+import { test, suite, mock, before } from "node:test";
 import path from "path";
+import { Patrika } from "./Patrika";
+import { getPatrika } from ".";
 
-describe("getPatrika", () => {
+suite("getPatrika", () => {
   let patrika: Patrika;
-  const onShortCode = jest.fn(async (args) => {
+  const onShortCode = mock.fn(async (args) => {
     return `<span>OnShortCode Called With Args ${JSON.stringify(args)}</span>`;
   });
   
 
-  beforeAll(async () => {
+  before(async () => {
     patrika = await getPatrika({
       postsGlob: path.join(process.cwd(), "src", "fixtures", "content", "posts", "**", "*.md"),
       pagesGlob: path.join(process.cwd(), "src", "fixtures", "content", "pages", "**", "*.md"),
@@ -19,44 +21,44 @@ describe("getPatrika", () => {
   });
 
   test("onShortcode should be called when the shortcode is encountered.", async () => {
-    // This is rather delicate test because only one of the files contains the shortcode at this
+    // This is rather fragile test because only one of the files contains the shortcode at this
     // moment. If we ever add the shortcode to another file, this test will need to be updated.
-    expect(onShortCode).toBeCalledTimes(1);
+    assert.strictEqual(onShortCode.mock.callCount, 1);
   });
 
   test("Item.body should include the return value from onShortCode", async () => {
     const item = (await patrika.find({ id: "fourth-one" }))[0];
-    expect(item.body).toContain('<span>OnShortCode Called With Args {"foo":"bar","baz":"qux"}</span>');
+    assert.strictEqual(item.body?.includes('<span>OnShortCode Called With Args {"foo":"bar","baz":"qux"}</span>'), true);
   });
 
   test("Patrika should expose the expected API", () => {
-    expect(patrika.getPages).toBeInstanceOf(Function);
-    expect(patrika.getPosts).toBeInstanceOf(Function);
-    expect(patrika.find).toBeInstanceOf(Function);
+    assert.strictEqual(patrika.getPages instanceof Function, true);
+    assert.strictEqual(patrika.getPosts instanceof Function, true);
+    assert.strictEqual(patrika.find instanceof Function, true);
   });
 
   test("getPosts should return the correct number of posts", async () => {
     const posts = await patrika.getPosts();
-    expect(posts).toBeInstanceOf(Array);
-    expect(posts.length).toBe(6);
+    assert.strictEqual(Array.isArray(posts), true);
+    assert.strictEqual(posts.length, 6);
   });
 
   test("getPosts should return the correct number of pages", async () => {
     const pages = await patrika.getPages();
-    expect(pages).toBeInstanceOf(Array);
-    expect(pages.length).toBe(3);
+    assert.strictEqual(Array.isArray(pages), true);
+    assert.strictEqual(pages.length, 3);
   });
 
   test("find should return the correct number of ContentItems", async () => {
     const allItems = await patrika.find();
-    expect(allItems).toBeInstanceOf(Array);
-    expect(allItems.length).toBe(9);
+    assert.strictEqual(Array.isArray(allItems), true);
+    assert.strictEqual(allItems.length, 9);
 
     const allPosts = await patrika.find({ type: "post" });
-    expect(allPosts).toBeInstanceOf(Array);
-    expect(allPosts.length).toBe(6);
+    assert.strictEqual(Array.isArray(allPosts), true);
+    assert.strictEqual(allPosts.length, 6);
 
     const targetPost = (await patrika.find({ id: "post-one" }))[0];
-    expect(targetPost.id).toBe("post-one");
+    assert.strictEqual(targetPost.id, "post-one");
   });
 });
