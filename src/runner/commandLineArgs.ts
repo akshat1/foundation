@@ -2,7 +2,7 @@ import commandLineArgs from "command-line-args";
 import commandLineUsage from "command-line-usage";
 
 interface CommandLineOptions {
-  config: string;
+  template: string;
   help: boolean;
   serve: boolean;
   verbose: boolean;
@@ -16,10 +16,10 @@ const clOptionDefinitions = [{
   type: Boolean,
   description: "Print this usage guide.",
 }, {
-  name: "config",
-  alias: "c",
+  name: "template",
+  alias: "t",
   type: String,
-  description: "Path to the configuration file.",
+  description: "Path to the template file.",
 }, {
   name: "verbose",
   alias: "v",
@@ -64,7 +64,11 @@ export const printUsageHelp = async (args: PrintUsageHelpArgs = {}) => {
     content: "A tool to turn your markdown and temmplates into a static website.",
   }, {
     header: "Sample Usage",
-    content: "$ patrika-runner -c patrika-config.json",
+    content: "$ patrika-runner -t template/index.js",
+  }, {
+    content: "$ patrika-runner -t template/index.js -w",
+  }, {
+    content: "$ patrika-runner -t template/index.js -s",
   }];
 
   if (errorMessage) {
@@ -112,8 +116,8 @@ export const doCommandLineValidation = async () => {
     process.exit(0);
   }
 
-  if (!clOptions.config) {
-    await printUsageHelp({ errorMessage: "Configuration file is required." });
+  if (!clOptions.template) {
+    await printUsageHelp({ errorMessage: "Template path is required." });
     process.exit(1);
   }
 };

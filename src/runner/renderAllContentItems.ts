@@ -2,9 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { getLogger } from "@akshat1/js-logger";
 import { ContentItem, Patrika } from "../index.js";
-import { getRunnerConfig } from "./getConfiguration.js";
-import { getFilePath } from "./getFilePath.js";
-import { loadTemplate, Template } from "../Template.js";
+import { loadTemplate } from "../Template.js";
 
 const rootLogger = getLogger("renderAllContentItems");
 
@@ -16,8 +14,9 @@ interface WriteHTMLFileArgs {
 const writeHTMLFile = async ({ item, strHTML, index } : WriteHTMLFileArgs) => {
   const logger = getLogger("writeHTMLFile", rootLogger);
   logger.debug(`Writing ${item.slug} / ${index}...`);
-  const conf = await getRunnerConfig();
-  const filePath = getFilePath(item, conf, index);
+  const template = await loadTemplate();
+  const { outDir } = template.getConfig();
+  const filePath = path.join(outDir, template.getURLRelativeToRoot(item, index)); // we call getURLRelativeToRoot with index (page number) if it exists.
   await fs.mkdir(path.dirname(filePath), { recursive: true });
   await fs.writeFile(filePath, strHTML);
   logger.debug(`Done writing ${item.slug} to ${filePath}.`);

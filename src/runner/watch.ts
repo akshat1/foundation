@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import { getLogger } from "@akshat1/js-logger";
-import { getRunnerConfig } from "./getConfiguration.js";
+import { loadTemplate } from "../Template.js";
 
 const logger = getLogger("watch");
 /**
@@ -9,7 +9,7 @@ const logger = getLogger("watch");
  */
 export const watch = async (onChange: () => void) => {
   logger.debug("Watching for changes...");
-  const { watchedPaths } = await getRunnerConfig();
+  const { watchedPaths } = (await loadTemplate()).getConfig();
   for (const watchedPath of watchedPaths) {
     logger.debug(`Watching ${watchedPath}`);
     fs.watch(watchedPath, { recursive: true }, onChange);

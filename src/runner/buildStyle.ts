@@ -3,7 +3,7 @@ import path from "node:path";
 import { getLogger } from "@akshat1/js-logger";
 import { glob } from "glob";
 import less from "less";
-import { getRunnerConfig } from "./getConfiguration.js";
+import { loadTemplate } from "../Template";
 
 /**
  * @param srcFile - Absolute path to the less file
@@ -41,7 +41,7 @@ export const buildStyle = async () => {
   const {
     lessDir,
     outDir,
-  } = await getRunnerConfig();
+  } = (await loadTemplate()).getConfig();
   const lessGlob = path.join(lessDir, "**/*.less");
   logger.debug(`Looking for less files in ${lessGlob}`);
   const files = await glob(lessGlob, { ignore: ["**/_*.less"] });

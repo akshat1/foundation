@@ -1,46 +1,38 @@
 import { Stats } from "fs";
 import { FrontMatterResult } from "front-matter";
-import { GetSlug } from "./GetSlug";
 import { FrontMatterAttributes } from "./front-matter/index.js";
-import { RunnerConfiguration } from "./runner/getConfiguration.js";
-import { getFilePath } from "./runner/getFilePath.js";
+import { loadTemplate, Template } from "./Template.js";
+import path from "node:path";
 
-export enum ContentItemType {
-  Page = "page",
-  Post = "post",
-}
-
+/**
+ * @TODO Rationalise this. Move most things into frontMatter attributes (which itself should be open ended; probably
+ * extend Record) so that the user can stuff whatever they want in there. Top level properties should be limited to
+ * whatever Patrika needs at a minimum.
+ *
+ * @TODO We'll probably also need to have a hook for the template to potentially augment the front matter attributes;
+ * or should we force the users to declare everything in frontMatter upfront?
+ *
+ * 
+ */
 export interface ContentItem {
-  authors: string[];
-  /**
-   * The HTML generated from the markdown content.
-   *
-   * This is optional because the body is generated in another pass and we need
-   * to account for a half-baked ContentItem, one without a body. Ideally we
-   * should use a partial type here so that the exposed API is consistent.
-   * 
-   * @TODO Use a partial type here instead of making `body` optional.
-   */
-  body?: string;
-  collections: string[];
-  draft: boolean;
-  excerpt: Record<string, string>;
-  /**
-   * `id` as specified using front-matter in the markdown file.
-   */
-  id: string;
-  image?: string;
-  imgAlt?: string;
+  // The actual content.
   markdown: string;
-  publishDate: string|null; // Date
-  slug: string;
-  tags: string[];
-  title: string;
-  type: ContentItemType;
-  frontMatter: FrontMatterAttributes;
+  body?: string;
+
+  // Populated by Patrika from file information + template.
   url: string;
   sourceFilePath: string;
   filePath: string;
+  slug: string;
+
+  // User supplied data (as part of the frontMatter section).
+  id: string;
+  title: string;
+  publishDate: string;
+  draft?: boolean;
+
+  // All other user supplied data (as part of the frontMatter section) lives here.
+  frontMatter: FrontMatterAttributes;
 }
 
 export const comparePostsByPublishedDate = (a: ContentItem, b: ContentItem): number => {
@@ -61,11 +53,8 @@ export const getPublishDate = (args: { attributes: FrontMatterAttributes, stats:
 
 export interface ToContentItemArgs {
   fmData: FrontMatterResult<FrontMatterAttributes>,
-  getSlug: GetSlug,
   sourceFilePath: string,
   stats: Stats,
-  type: ContentItemType,
-  conf: RunnerConfiguration,
 }
 
 /**
@@ -76,15 +65,15 @@ export interface ToContentItemArgs {
  * @param args 
  * @returns 
  */
-export const toContentItem = (args: ToContentItemArgs): ContentItem => {
+export const toContentItem = async (args: ToContentItemArgs): Promise<ContentItem> => {
   const {
     sourceFilePath,
     fmData,
-    getSlug,
     stats,
-    type,
-    conf,
   } = args;
+
+  const template = await loadTemplate();
+  const conf = await template.getConfig();
 
   const {
     attributes,
@@ -117,18 +106,14 @@ export const toContentItem = (args: ToContentItemArgs): ContentItem => {
     imgAlt,
     markdown,
     publishDate,
-    slug: getSlug({
-      filePath: sourceFilePath,
-      attributes: { ...fmData.attributes, publishDate },
-      type,
-    }),
+    slug: "pending",
     tags,
     title,
-    type,
   };
 
-  item.filePath = getFilePath(item, conf);
-  item.url = item.filePath.replace(conf.outDir, "");
+  item.slug = template.getSlug(item);
+  item.url = template.getURLRelativeToRoot(item);
+  item.filePath = path.join(conf.outDir, item.url);
 
   return item;
 };

@@ -1,11 +1,8 @@
-import path from "node:path";
 import { getLogger } from "@akshat1/js-logger";
-import slugify from "slugify";
-import { ContentItemType, getPatrika } from "../index.js";
-import { buildStyle } from "./buildStyle.js";
-import { getRunnerConfig } from "./getConfiguration.js";
+import { getPatrika } from "../index.js";
 import { renderAllContentItems } from "./renderAllContentItems.js";
 import { flushTemplate, loadTemplate } from "../Template.js";
+import path from "node:path";
 
 const logger = getLogger("build");
 let isBuilding = false;
@@ -18,26 +15,19 @@ export const build = async () => {
   logger.debug("Build everything...");
   isBuilding = true;
 
-  const conf = await getRunnerConfig();
   flushTemplate();
-  const patrika = await getPatrika({
-    pagesGlob: conf.pagesGlob,
-    postsGlob: conf.postsGlob,
-    getSlug: (await loadTemplate()).getSlug,
-    // onShortCode, // This should be from the template.
-  });
+  const template = await loadTemplate();
+  logger.debug("Template loaded.", template);
+  const conf = template.getConfig();
+  logger.debug("Configuration", conf);
+  const { contentGlob } = conf;
+  const patrika = await getPatrika({ contentGlob });
 
-  const patrikaQuery = {
-    type: {
-      $in: [
-        ContentItemType.Page,
-        ContentItemType.Post
-      ],
-    },
-  };
+  const contentItems = await patrika.find();
+  logger.debug("Found content items:", contentItems.length);
   await Promise.all([
-    buildStyle(),
-    renderAllContentItems(await patrika.find(patrikaQuery), patrika),
+    // buildStyle(),
+    renderAllContentItems(contentItems, patrika),
   ]);
 
   logger.debug("Done building everything.");

@@ -1,40 +1,28 @@
 import fs from "node:fs/promises";
 import { glob } from "glob";
-import { ContentItem, ContentItemType, toContentItem } from "./ContentItem.js";
-import { GetSlug } from "./GetSlug.js";
+import { ContentItem, toContentItem } from "./ContentItem.js";
 import { getFMData } from "./front-matter/index.js";
-import { getRunnerConfig } from "./runner/getConfiguration.js";
+import getLogger from "@akshat1/js-logger";
 
-interface FileWalkerArgs {
-  globPattern: string;
-  getSlug: GetSlug;
-  type: ContentItemType;
-}
-
-export const fileWalker = async (args: FileWalkerArgs): Promise<ContentItem[]> => {
-  const {
-    globPattern,
-    getSlug,
-    type,
-  } = args;
-  const conf = await getRunnerConfig();
+const logger = getLogger("fileWalker");
+export const fileWalker = async (globPattern: string): Promise<ContentItem[]> => {
   const sourceFilePaths = await glob(globPattern);
+  logger.debug({ globPattern, sourceFilePaths });
   const items = [];
   for (const sourceFilePath of sourceFilePaths) {
     const stats = await fs.stat(sourceFilePath);
     if (!stats.isFile()) {
+      logger.warn("Skipping non-file", sourceFilePath);
       continue;
     }
 
+    debugger;
     const markdown = (await fs.readFile(sourceFilePath)).toString();
     const fmData = getFMData({ markdown, filePath: sourceFilePath });
-    const item = toContentItem({
+    const item = await toContentItem({
       sourceFilePath,
       stats,
       fmData,
-      getSlug,
-      type,
-      conf,
     });
 
     items.push(item);

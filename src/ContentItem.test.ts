@@ -1,7 +1,7 @@
 import assert from "assert";
 import { test, suite } from "node:test";
 import { FrontMatterResult } from "front-matter";
-import { ContentItem, ContentItemType, getPublishDate, toContentItem, ToContentItemArgs , comparePostsByPublishedDate } from "./ContentItem";
+import { ContentItem, getPublishDate, toContentItem, ToContentItemArgs , comparePostsByPublishedDate } from "./ContentItem";
 import { FrontMatterAttributes } from "./front-matter";
 
 suite("ContentItem", () => {
@@ -20,7 +20,6 @@ suite("ContentItem", () => {
       slug: "",
       tags: [],
       title: "",
-      type: ContentItemType.Post,
     };
     const makeFakeItem = (publishDate: string): ContentItem => ({
       ...FakeItemStub,
@@ -106,7 +105,6 @@ suite("ContentItem", () => {
         frontmatter: "all ze frontmatter",
       };
       const contentItemArgs: ToContentItemArgs = {
-        type: ContentItemType.Post,
         filePath: "foo/bar/baz.md",
         fmData: frontMatter,
         getSlug: () => "jabba-the-hut",
@@ -125,7 +123,6 @@ suite("ContentItem", () => {
         slug: "jabba-the-hut",
         tags,
         title,
-        type: ContentItemType.Post,
         image,
         imgAlt,
         excerpt: {},

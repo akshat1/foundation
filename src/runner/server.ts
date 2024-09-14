@@ -11,7 +11,7 @@ import { getLogger } from "@akshat1/js-logger";
 import express, { RequestHandler } from "express";
 import ExpressWS from "express-ws";
 import parseurl from "parseurl";
-import { getRunnerConfig } from "./getConfiguration.js";
+import { loadTemplate } from "../Template";
 
 const ServerConf = {
   port: "3000",
@@ -73,7 +73,7 @@ interface ContentResponse {
 const getContent = async (reqPath: string): Promise<ContentResponse> => {
   const logger = getLogger("getContent");
   logger.debug("Getting content for path:", reqPath);
-  const conf = await getRunnerConfig();
+  const conf = (await loadTemplate()).getConfig();
   let filePath = path.join(conf.outDir, reqPath);
   let stat = await fs.stat(filePath);
   if (stat.isDirectory()) {
