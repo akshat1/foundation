@@ -21,6 +21,7 @@ export const fileWalker = async (args: FileWalkerArgs): Promise<ContentItem[]> =
     globPattern,
     outDir,
   } = args;
+  logger.debug(`Read glob ${globPattern}`);
   const sourceFilePaths = await glob(globPattern);
   logger.debug({ globPattern, sourceFilePaths });
   const items = [];

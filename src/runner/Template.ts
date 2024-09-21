@@ -3,6 +3,7 @@ import { getLogger } from "@akshat1/js-logger";
 import { GetSlug } from "../GetSlug.js";
 import { GetURLRelativeToRoot } from "../GetURLRelativeToRoot.js";
 import { RenderToString } from "../RenderToString.js";
+import { OnShortCode } from "../markdown/extensions/OnShortCode.js";
 import { RunnerConfiguration } from "./RunnerConfiguration.js";
 import { getCommandLineOptions } from "./commandLineArgs.js";
 
@@ -11,6 +12,7 @@ export interface Template {
   getSlug: GetSlug;
   getURLRelativeToRoot: GetURLRelativeToRoot;
   getConfig: () => RunnerConfiguration;
+  onShortCode?: OnShortCode;
 };
 
 const rootLogger = getLogger("Template");

@@ -1,10 +1,14 @@
+import { getLogger } from "@akshat1/js-logger";
 import PicoDB from "picodb";
 import { ContentItem } from "./ContentItem.js";
+import { GetSlug } from "./GetSlug.js";
+import { GetURLRelativeToRoot } from "./GetURLRelativeToRoot.js";
 import { Patrika } from "./Patrika.js";
 import { fileWalker } from "./fileWalker.js";
 import { FrontMatterAttributes } from "./front-matter/index.js";
 import { OnShortCode } from "./markdown/extensions/OnShortCode.js";
 import { renderAllMarkdown } from "./markdown/index.js";
+import { RunnerConfiguration } from "./runner/RunnerConfiguration.js";
 export { RunnerConfiguration } from "./runner/RunnerConfiguration.js";
 export { Template } from "./runner/Template.js";
 
@@ -15,20 +19,31 @@ export {
   OnShortCode,
 };
 
+const logger = getLogger("getPatrika");
 export interface GetPatrikaArgs {
   contentGlob,
   onShortCode?: OnShortCode;
-  prettify?: boolean;
+  getSlug: GetSlug;
+  getURLRelativeToRoot: GetURLRelativeToRoot;
+  config: RunnerConfiguration;
 }
-
 export const getPatrika = async (args: GetPatrikaArgs): Promise<Patrika> => {
+  logger.debug(args);
   const {
     onShortCode,
     contentGlob,
+    getSlug,
+    getURLRelativeToRoot,
+    config,
   } = args;
   const db = new PicoDB<ContentItem>();
 
-  const items = await fileWalker(contentGlob);
+  const items = await fileWalker({
+    getSlug,
+    getURLRelativeToRoot,
+    globPattern: contentGlob,
+    outDir: config.outDir,
+  });
   db.insertMany(items);
 
   const patrika: Patrika = {

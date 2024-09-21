@@ -21,7 +21,7 @@ const getClientScriptAddition = async (): Promise<string> => {
   
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = path.dirname(__filename);
-  const clientScriptPath = path.join(__dirname, "..", "assets", "client-script.js"); // @TODO Need a better mechanism for doing this.
+  const clientScriptPath = path.join(__dirname, "../..", "assets", "client-script.js");
   try {
     scriptTextAddition = 
       `<script>${(await fs.readFile(clientScriptPath)).toString("utf-8")}</script></body>`

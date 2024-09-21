@@ -15,6 +15,15 @@ suite("getPatrika", () => {
     patrika = await getPatrika({
       contentGlob: path.join(process.cwd(), "src", "fixtures", "content", "**", "*.md"),
       onShortCode,
+      config: {
+        contentGlob: "foo/content/**/*.md",
+        lessDir: "foo/style",
+        outDir: "bar",
+        template: "foo/template/index.js",
+        watchedPaths: ["foo/template", "foo/style", "foo/content"],
+      },
+      getSlug: () => "",
+      getURLRelativeToRoot: () => "",
     });
   });
 

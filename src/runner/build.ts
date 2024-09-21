@@ -1,6 +1,7 @@
 import { getLogger } from "@akshat1/js-logger";
 import { getPatrika } from "../index.js";
 import { flushTemplate, loadTemplate } from "./Template.js";
+import { buildStyle } from "./buildStyle.js";
 import { renderAllContentItems } from "./renderAllContentItems.js";
 
 const logger = getLogger("build");
@@ -23,18 +24,32 @@ export const build = async () => {
   const {
     getURLRelativeToRoot,
     renderToString,
+    getConfig,
+    getSlug,
+    onShortCode,
   } = template;
+  const config = getConfig();
   const {
     contentGlob,
     outDir,
-  } = template.getConfig();
-  const patrika = await getPatrika({ contentGlob });
+  } = config;
+  logger.debug("Config:", config);
+  const patrika = await getPatrika({
+    contentGlob,
+    config,
+    getSlug,
+    getURLRelativeToRoot,
+    onShortCode,
+  });
 
   // Re-read files from the glob; because we may have added/removed files.
   const contentItems = await patrika.find();
   logger.debug("Found content items:", contentItems.length);
   await Promise.all([
-    // buildStyle(),
+    buildStyle({
+      outDir,
+      lessDir: config.lessDir,
+    }),
     renderAllContentItems({
       getURLRelativeToRoot,
       items: contentItems,
