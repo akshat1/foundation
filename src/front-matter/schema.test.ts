@@ -26,6 +26,6 @@ suite("validate", () => {
     assert.deepEqual(validate({
       id: "foo",
       publishDate: new Date("2022-01-01"),
-    }), ["authors", "title"]);
+    }), ["title"]);
   });
 });
