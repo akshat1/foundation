@@ -1,8 +1,3 @@
-import { ContentItemType, FrontMatterAttributes } from ".";
+import { ContentItem } from "./ContentItem";
 
-interface GetSlugArgs {
-  filePath: string;
-  attributes: FrontMatterAttributes;
-  type: ContentItemType;
-}
-export type GetSlug = (args: GetSlugArgs) => string;
+export type GetSlug = (item: ContentItem) => string;

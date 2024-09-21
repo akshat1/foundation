@@ -1,40 +1,38 @@
 import { Stats } from "fs";
+import path from "node:path";
 import { FrontMatterResult } from "front-matter";
-import { GetSlug } from "./GetSlug";
-import { FrontMatterAttributes } from "./front-matter";
+import { GetSlug } from "./GetSlug.js";
+import { GetURLRelativeToRoot } from "./GetURLRelativeToRoot.js";
+import { FrontMatterAttributes } from "./front-matter/index.js";
 
-export enum ContentItemType {
-  Page = "page",
-  Post = "post",
-}
-
+/**
+ * @TODO Rationalise this. Move most things into frontMatter attributes (which itself should be open ended; probably
+ * extend Record) so that the user can stuff whatever they want in there. Top level properties should be limited to
+ * whatever Patrika needs at a minimum.
+ *
+ * @TODO We'll probably also need to have a hook for the template to potentially augment the front matter attributes;
+ * or should we force the users to declare everything in frontMatter upfront?
+ *
+ * 
+ */
 export interface ContentItem {
-  authors: string[];
-  /**
-   * The HTML generated from the markdown content.
-   *
-   * This is optional because the body is generated in another pass and we need
-   * to account for a half-baked ContentItem, one without a body. Ideally we
-   * should use a partial type here so that the exposed API is consistent.
-   * 
-   * @TODO Use a partial type here instead of making `body` optional.
-   */
-  body?: string;
-  collections: string[];
-  draft: boolean;
-  excerpt: Record<string, string>;
-  /**
-   * `id` as specified using front-matter in the markdown file.
-   */
-  id: string;
-  image?: string;
-  imgAlt?: string;
+  // The actual content.
   markdown: string;
-  publishDate: string|null; // Date
+  body?: string;
+
+  // Populated by Patrika from file information + template.
+  url: string;
+  sourceFilePath: string;
+  filePath: string;
   slug: string;
-  tags: string[];
+
+  // User supplied data (as part of the frontMatter section).
+  id: string;
   title: string;
-  type: ContentItemType;
+  publishDate: Date;
+  draft?: boolean;
+
+  // All other user supplied data (as part of the frontMatter section) lives here.
   frontMatter: FrontMatterAttributes;
 }
 
@@ -44,31 +42,39 @@ export const comparePostsByPublishedDate = (a: ContentItem, b: ContentItem): num
   return dB - dA;
 };
 
-export const getPublishDate = (args: { attributes: FrontMatterAttributes, stats: Stats }): string|null => {
-  const strDate = args.attributes?.publishDate || args.stats.ctime;
-  if (strDate) {
-    const date = new Date(strDate);
-    return date.toISOString().replace(/T.*$/, "");
+export const getPublishDate = (args: { attributes: FrontMatterAttributes, stats: Stats }): Date => {
+  if (args.attributes?.publishDate) {
+    return args.attributes.publishDate;
   }
 
-  return null;
+  return new Date(args.stats.ctime);
 };
 
 export interface ToContentItemArgs {
-  fmData: FrontMatterResult<FrontMatterAttributes>,
-  getSlug: GetSlug,
-  filePath: string,
-  stats: Stats,
-  type: ContentItemType,
+  fmData: FrontMatterResult<FrontMatterAttributes>;
+  sourceFilePath: string;
+  stats: Stats;
+  getSlug: GetSlug;
+  getURLRelativeToRoot: GetURLRelativeToRoot;
+  outDir: string;
 }
 
-export const toContentItem = (args: ToContentItemArgs): ContentItem => {
+/**
+ * @TODO: Clean this (and associated code in other files) up. Right now we have some repetition and some peanut
+ * buttering of logic into multiple modules. Can we get rid of some partial types and just pass around a dummy item
+ * which gets progressively filled up? Similar to what we did for getFilePath?
+ *
+ * @param args 
+ * @returns 
+ */
+export const toContentItem = async (args: ToContentItemArgs): Promise<ContentItem> => {
   const {
-    filePath,
+    sourceFilePath,
     fmData,
-    getSlug,
     stats,
-    type,
+    getSlug,
+    getURLRelativeToRoot,
+    outDir,
   } = args;
 
   const {
@@ -88,8 +94,10 @@ export const toContentItem = (args: ToContentItemArgs): ContentItem => {
   } = attributes;
 
   const publishDate = getPublishDate({ attributes, stats });
-
-  return {
+  const item = {
+    sourceFilePath,
+    filePath: "pending",
+    url: "pending",
     authors,
     collections,
     draft,
@@ -100,13 +108,14 @@ export const toContentItem = (args: ToContentItemArgs): ContentItem => {
     imgAlt,
     markdown,
     publishDate,
-    slug: getSlug({
-      filePath,
-      attributes: { ...fmData.attributes, publishDate },
-      type,
-    }),
+    slug: "pending",
     tags,
     title,
-    type,
   };
+
+  item.slug = getSlug(item);
+  item.url = getURLRelativeToRoot(item);
+  item.filePath = path.join(outDir, item.url);
+
+  return item;
 };

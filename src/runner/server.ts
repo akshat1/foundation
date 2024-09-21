@@ -1,9 +1,3 @@
-/*
- * ALTERNATIVELY
- * - Use https://github.com/tapio/live-server to serve the files; the server can be instantiated in code.
- * - OR, use https://github.com/1wheel/hot-server to do the same, but it'll be triggered from the npm script.
- */
-
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -11,7 +5,9 @@ import { getLogger } from "@akshat1/js-logger";
 import express, { RequestHandler } from "express";
 import ExpressWS from "express-ws";
 import parseurl from "parseurl";
-import { getRunnerConfig } from "./getConfiguration.js";
+import { RunnerConfiguration } from "./RunnerConfiguration";
+
+let runnerConfig: RunnerConfiguration;
 
 const ServerConf = {
   port: "3000",
@@ -25,7 +21,7 @@ const getClientScriptAddition = async (): Promise<string> => {
   
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = path.dirname(__filename);
-  const clientScriptPath = path.join(__dirname, "..", "assets", "client-script.js"); // @TODO Need a better mechanism for doing this.
+  const clientScriptPath = path.join(__dirname, "../..", "assets", "client-script.js");
   try {
     scriptTextAddition = 
       `<script>${(await fs.readFile(clientScriptPath)).toString("utf-8")}</script></body>`
@@ -73,8 +69,7 @@ interface ContentResponse {
 const getContent = async (reqPath: string): Promise<ContentResponse> => {
   const logger = getLogger("getContent");
   logger.debug("Getting content for path:", reqPath);
-  const conf = await getRunnerConfig();
-  let filePath = path.join(conf.outDir, reqPath);
+  let filePath = path.join(runnerConfig.outDir, reqPath);
   let stat = await fs.stat(filePath);
   if (stat.isDirectory()) {
     filePath = path.join(filePath, "index.html");
@@ -151,8 +146,9 @@ const staticServer: RequestHandler = async (req, res, next) => {
 
 type SignalReloadCB = () => void;
 
-export const startServer = async (): Promise<SignalReloadCB> => {
+export const startServer = async (conf: RunnerConfiguration): Promise<SignalReloadCB> => {
   const logger = getLogger("startServer");
+  runnerConfig = conf;
   logger.info("Starting server...");
   // Build everything
   // Start the server
@@ -164,7 +160,6 @@ export const startServer = async (): Promise<SignalReloadCB> => {
   app.use(staticServer);
 
   // Add websocket server
-  /// @ts-ignore
   app.ws("/", (ws) => {
     logger.info("Websocket connection established.");
     ws.on("message", (msg) => {
@@ -180,7 +175,6 @@ export const startServer = async (): Promise<SignalReloadCB> => {
 
   return () => {
     logger.info("Asked to signal reload...");
-    /// @ts-ignore
     expressWSS.getWss().clients.forEach((client) => {
       if (client.readyState === client.OPEN) {
         logger.info("Sending reload signal to client...");

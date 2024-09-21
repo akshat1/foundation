@@ -13,10 +13,17 @@ suite("getPatrika", () => {
 
   before(async () => {
     patrika = await getPatrika({
-      postsGlob: path.join(process.cwd(), "src", "fixtures", "content", "posts", "**", "*.md"),
-      pagesGlob: path.join(process.cwd(), "src", "fixtures", "content", "pages", "**", "*.md"),
-      getSlug: ({ filePath, attributes }) => attributes.title || path.basename(filePath).replace(/\.md$/, ""),
+      contentGlob: path.join(process.cwd(), "src", "fixtures", "content", "**", "*.md"),
       onShortCode,
+      config: {
+        contentGlob: "foo/content/**/*.md",
+        lessDir: "foo/style",
+        outDir: "bar",
+        template: "foo/template/index.js",
+        watchedPaths: ["foo/template", "foo/style", "foo/content"],
+      },
+      getSlug: () => "",
+      getURLRelativeToRoot: () => "",
     });
   });
 
@@ -32,21 +39,7 @@ suite("getPatrika", () => {
   });
 
   test("Patrika should expose the expected API", () => {
-    assert.strictEqual(patrika.getPages instanceof Function, true);
-    assert.strictEqual(patrika.getPosts instanceof Function, true);
     assert.strictEqual(patrika.find instanceof Function, true);
-  });
-
-  test("getPosts should return the correct number of posts", async () => {
-    const posts = await patrika.getPosts();
-    assert.strictEqual(Array.isArray(posts), true);
-    assert.strictEqual(posts.length, 6);
-  });
-
-  test("getPosts should return the correct number of pages", async () => {
-    const pages = await patrika.getPages();
-    assert.strictEqual(Array.isArray(pages), true);
-    assert.strictEqual(pages.length, 3);
   });
 
   test("find should return the correct number of ContentItems", async () => {

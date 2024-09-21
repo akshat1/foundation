@@ -3,8 +3,6 @@ import path from "node:path";
 import { getLogger } from "@akshat1/js-logger";
 import { glob } from "glob";
 import less from "less";
-import { ensureDirectory } from "./ensureDirectory.js";
-import { getRunnerConfig } from "./getConfiguration.js";
 
 /**
  * @param srcFile - Absolute path to the less file
@@ -15,8 +13,21 @@ import { getRunnerConfig } from "./getConfiguration.js";
  * @description
  * getDestinationPath("/myProj/foo/bar/baz.less", "/myProj/foo", "/out") -> "/out/bar/baz.css"
  */
-export const getDestinationPath = (srcFile: string, lessDir: string, outDir: string) =>
-  srcFile.replace(lessDir, outDir).replace(/\.less$/, ".css");
+export const getDestinationPath = (srcFile: string, lessDir: string, outDir: string) => {
+  const logger = getLogger("getDestinationPath");
+  const result = path.join(
+    outDir,
+    path.relative(lessDir, srcFile).replace(/\.less$/, ".css")
+  );
+
+  logger.debug({
+    srcFile,
+    lessDir,
+    outDir,
+    result,
+  });
+  return result;
+}
 
 export const buildLessFile = async (srcFile: string, lessDir: string, outDir: string) => {
   const logger = getLogger("buildLessFile");
@@ -28,7 +39,7 @@ export const buildLessFile = async (srcFile: string, lessDir: string, outDir: st
   try {
     const result = await less.render(contents, lessOpts);
     const destinationPath = getDestinationPath(srcFile, lessDir, outDir);
-    await ensureDirectory(path.dirname(destinationPath));
+    await fs.mkdir(path.dirname(destinationPath), { recursive: true });
     logger.debug(`Writing to ${destinationPath}...`);
     await fs.writeFile(destinationPath, result.css);
     logger.debug("Done!");
@@ -37,12 +48,17 @@ export const buildLessFile = async (srcFile: string, lessDir: string, outDir: st
   }
 };
 
-export const buildStyle = async () => {
+interface BuildStyleArgs {
+  lessDir: string;
+  outDir: string;
+}
+
+export const buildStyle = async (args: BuildStyleArgs) => {
   const logger = getLogger("getBuildStyle");
   const {
     lessDir,
     outDir,
-  } = await getRunnerConfig();
+  } = args;
   const lessGlob = path.join(lessDir, "**/*.less");
   logger.debug(`Looking for less files in ${lessGlob}`);
   const files = await glob(lessGlob, { ignore: ["**/_*.less"] });

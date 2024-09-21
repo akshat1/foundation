@@ -1,7 +1,7 @@
 import assert from "assert";
 import { test, suite } from "node:test";
 import { FrontMatterResult } from "front-matter";
-import { ContentItem, ContentItemType, getPublishDate, toContentItem, ToContentItemArgs , comparePostsByPublishedDate } from "./ContentItem";
+import { ContentItem, getPublishDate, toContentItem, ToContentItemArgs , comparePostsByPublishedDate } from "./ContentItem";
 import { FrontMatterAttributes } from "./front-matter";
 
 suite("ContentItem", () => {
@@ -16,15 +16,14 @@ suite("ContentItem", () => {
       frontMatter: {},
       id: "",
       markdown: "",
-      publishDate: "",
+      publishDate: new Date(),
       slug: "",
       tags: [],
       title: "",
-      type: ContentItemType.Post,
     };
     const makeFakeItem = (publishDate: string): ContentItem => ({
       ...FakeItemStub,
-      publishDate,
+      publishDate: new Date(publishDate),
     });
   
     test("should return 0 when a and b are the same", () => {
@@ -82,7 +81,7 @@ suite("ContentItem", () => {
     test("should return a well formed ContentItem", () => {
       const authors = ["foo", "bar"];
       const id = "post-42";
-      const publishDate = "2023-01-01";
+      const publishDate = new Date("2023-01-01");
       const title = "Le Title";
       const collections = ["one", "two"];
       const image = "/images/blah";
@@ -106,7 +105,6 @@ suite("ContentItem", () => {
         frontmatter: "all ze frontmatter",
       };
       const contentItemArgs: ToContentItemArgs = {
-        type: ContentItemType.Post,
         filePath: "foo/bar/baz.md",
         fmData: frontMatter,
         getSlug: () => "jabba-the-hut",
@@ -125,7 +123,6 @@ suite("ContentItem", () => {
         slug: "jabba-the-hut",
         tags,
         title,
-        type: ContentItemType.Post,
         image,
         imgAlt,
         excerpt: {},

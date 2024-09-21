@@ -7,32 +7,10 @@ id = "process1"
 name = "To Do"
 
   [[processes.tasks]]
-  id = "go0ac2kef3682q5m9jrns0x2"
-  title = "Accept string[] from renderToString in order to handle pagination."
-  description = ""
-  tag = "backlog"
-  linkFiles = [ ]
-  dueDate = ""
-  checkList = [ ]
-  priority = ""
-  linkCommits = [ ]
-
-  [[processes.tasks]]
   id = "xavnrf4ccgjvaau990dl5lsj"
   title = "Externalize output file path logic"
   description = "Currently, patrika-runner determines output file names. But it might be better to have that logic be specifid by the template. This relates to the pagination task."
   tag = "backlog"
-  linkFiles = [ ]
-  dueDate = ""
-  checkList = [ ]
-  priority = ""
-  linkCommits = [ ]
-
-  [[processes.tasks]]
-  id = "h5hth4j5oya1o0m4cyw928s1"
-  title = "fmData.publishDate - string or Date?"
-  description = "<p>Find out where fmData.publishDate is being converted from string to Date; and decide whether we want it to be a Date after all. Update the interface or code accordingly.</p>"
-  tag = "bug"
   linkFiles = [ ]
   dueDate = ""
   checkList = [ ]
@@ -53,9 +31,45 @@ name = "To Do"
 [[processes]]
 id = "process2"
 name = "In Progress"
-tasks = [ ]
+
+  [[processes.tasks]]
+  id = "go0ac2kef3682q5m9jrns0x2"
+  title = "Accept string[] from renderToString in order to handle pagination."
+  description = ""
+  tag = "backlog"
+  linkFiles = [ ]
+  dueDate = ""
+  checkList = [ ]
+  priority = ""
+  linkCommits = [ ]
+
+  [[processes.tasks]]
+  id = "ceyck8v9lkc9dpr954ck63sh"
+  title = "Both getSlug and getURL should be supplied by the template."
+  description = """
+`getURL` and `getSlug` should both be supplied by the template. Patrika should then figure out the output file path by concatenating the url (from getURL) to conf.outDir.
+
+This is required because
+1. Patrika should not be determining the output URL structure.
+2. This would be useful for things like the fanout concept which I'm exploring for generating ad-hoc pages without corresponding md files; such as for creating individual HTML files for each tag."""
+  tag = "backlog"
+  linkFiles = [ ]
+  dueDate = ""
+  checkList = [ ]
+  priority = ""
+  linkCommits = [ ]
 
 [[processes]]
 id = "process3"
 name = "Done"
-tasks = [ ]
+
+  [[processes.tasks]]
+  id = "h5hth4j5oya1o0m4cyw928s1"
+  title = "fmData.publishDate - string or Date?"
+  description = "<p>Find out where fmData.publishDate is being converted from string to Date; and decide whether we want it to be a Date after all. Update the interface or code accordingly.</p><hr><p>Turns out FrontMatter reads <code>publishDate</code> as a <code>Date</code> object. For now, I'm calling this one solved, but I'll think about hardening things when I implement schema validation and item augmentation by the template.</p>"
+  tag = "bug"
+  linkFiles = [ ]
+  dueDate = ""
+  checkList = [ ]
+  priority = ""
+  linkCommits = [ ]

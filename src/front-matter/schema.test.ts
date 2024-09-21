@@ -7,7 +7,7 @@ suite("validate", () => {
     const actual = validate({
       authors: ["FOO"],
       id: "foo",
-      publishDate: "2022-01-01",
+      publishDate: new Date("2022-01-01"),
       title: "bar",
     });
 
@@ -25,7 +25,7 @@ suite("validate", () => {
     /// @ts-expect-error
     assert.deepEqual(validate({
       id: "foo",
-      publishDate: "2022-01-01",
-    }), ["authors", "title"]);
+      publishDate: new Date("2022-01-01"),
+    }), ["title"]);
   });
 });
