@@ -1,11 +1,26 @@
 import fs from "node:fs/promises";
+import { getLogger } from "@akshat1/js-logger";
 import { glob } from "glob";
 import { ContentItem, toContentItem } from "./ContentItem.js";
+import { GetSlug } from "./GetSlug.js";
+import { GetURLRelativeToRoot } from "./GetURLRelativeToRoot.js";
 import { getFMData } from "./front-matter/index.js";
-import getLogger from "@akshat1/js-logger";
 
 const logger = getLogger("fileWalker");
-export const fileWalker = async (globPattern: string): Promise<ContentItem[]> => {
+
+interface FileWalkerArgs {
+  getSlug: GetSlug;
+  getURLRelativeToRoot: GetURLRelativeToRoot;
+  outDir: string;
+  globPattern: string;
+}
+export const fileWalker = async (args: FileWalkerArgs): Promise<ContentItem[]> => {
+  const {
+    getSlug,
+    getURLRelativeToRoot,
+    globPattern,
+    outDir,
+  } = args;
   const sourceFilePaths = await glob(globPattern);
   logger.debug({ globPattern, sourceFilePaths });
   const items = [];
@@ -18,11 +33,15 @@ export const fileWalker = async (globPattern: string): Promise<ContentItem[]> =>
 
     debugger;
     const markdown = (await fs.readFile(sourceFilePath)).toString();
+    debugger
     const fmData = getFMData({ markdown, filePath: sourceFilePath });
     const item = await toContentItem({
       sourceFilePath,
       stats,
       fmData,
+      getSlug,
+      getURLRelativeToRoot,
+      outDir,
     });
 
     items.push(item);

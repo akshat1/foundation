@@ -19,17 +19,16 @@
 export interface FrontMatterAttributes extends Record<string, unknown> {
   id: string;
   title: string;
-  publishDate: string;
+  publishDate: Date;
   draft?: boolean;
 }
 
-const DatePattern = /\d{4}-\d{1,2}-\d{1,2}/;
 type ValidatorFunc = (obj: FrontMatterAttributes) => boolean;
 type Schema = Record<string, ValidatorFunc>;
 const FMDataSchema: Schema = {
   id: obj => typeof obj.id === "string",
   title: obj => typeof obj.title === "string",
-  publishDate: obj => typeof obj.publishDate === "string" && DatePattern.test(obj.publishDate),
+  publishDate: obj => obj.publishDate instanceof Date,
 };
 
 const doValidate = (schema: Schema, data: FrontMatterAttributes): string[] => {

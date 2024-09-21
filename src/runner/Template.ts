@@ -1,13 +1,15 @@
-import getLogger from "@akshat1/js-logger";
-import { RunnerConfiguration } from "./runner/RunnerConfiguration.js";
-import { ContentItem } from "./index.js";
-import { getCommandLineOptions } from "./runner/commandLineArgs.js";
 import path from "node:path";
+import { getLogger } from "@akshat1/js-logger";
+import { GetSlug } from "../GetSlug.js";
+import { GetURLRelativeToRoot } from "../GetURLRelativeToRoot.js";
+import { RenderToString } from "../RenderToString.js";
+import { RunnerConfiguration } from "./RunnerConfiguration.js";
+import { getCommandLineOptions } from "./commandLineArgs.js";
 
 export interface Template {
-  renderToString: (item: any, patrika: any) => Promise<string|string[]>;
-  getSlug: (item: ContentItem) => string;
-  getURLRelativeToRoot: (item: ContentItem, pageNumber?: number) => string;
+  renderToString: RenderToString;
+  getSlug: GetSlug;
+  getURLRelativeToRoot: GetURLRelativeToRoot;
   getConfig: () => RunnerConfiguration;
 };
 
@@ -55,6 +57,11 @@ const tryLoading = async (templatePath: string, terminate?: boolean) => {
   }
 };
 
+/**
+ * We expect this to only be called from the runner; i.e., when Patrika is used from the command line with a template.
+ * This file is not involved when Patrika is used programmatically.
+ * @returns 
+ */
 export const loadTemplate = async () => {
   const logger = getLogger("loadTemplate", rootLogger);
   const { template: templatePath } = getCommandLineOptions();

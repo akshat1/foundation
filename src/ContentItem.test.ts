@@ -16,14 +16,14 @@ suite("ContentItem", () => {
       frontMatter: {},
       id: "",
       markdown: "",
-      publishDate: "",
+      publishDate: new Date(),
       slug: "",
       tags: [],
       title: "",
     };
     const makeFakeItem = (publishDate: string): ContentItem => ({
       ...FakeItemStub,
-      publishDate,
+      publishDate: new Date(publishDate),
     });
   
     test("should return 0 when a and b are the same", () => {
@@ -81,7 +81,7 @@ suite("ContentItem", () => {
     test("should return a well formed ContentItem", () => {
       const authors = ["foo", "bar"];
       const id = "post-42";
-      const publishDate = "2023-01-01";
+      const publishDate = new Date("2023-01-01");
       const title = "Le Title";
       const collections = ["one", "two"];
       const image = "/images/blah";

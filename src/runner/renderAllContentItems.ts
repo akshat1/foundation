@@ -1,32 +1,50 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { getLogger } from "@akshat1/js-logger";
+import { GetURLRelativeToRoot } from "../GetURLRelativeToRoot.js";
+import { RenderToString } from "../RenderToString.js";
 import { ContentItem, Patrika } from "../index.js";
-import { loadTemplate } from "../Template.js";
 
 const rootLogger = getLogger("renderAllContentItems");
 
 interface WriteHTMLFileArgs {
   item: ContentItem;
   strHTML: string;
-  index?: number;
+  outputFilePath: string;
 }
-const writeHTMLFile = async ({ item, strHTML, index } : WriteHTMLFileArgs) => {
+const writeHTMLFile = async (args : WriteHTMLFileArgs) => {
   const logger = getLogger("writeHTMLFile", rootLogger);
-  logger.debug(`Writing ${item.slug} / ${index}...`);
-  const template = await loadTemplate();
-  const { outDir } = template.getConfig();
-  const filePath = path.join(outDir, template.getURLRelativeToRoot(item, index)); // we call getURLRelativeToRoot with index (page number) if it exists.
-  await fs.mkdir(path.dirname(filePath), { recursive: true });
-  await fs.writeFile(filePath, strHTML);
-  logger.debug(`Done writing ${item.slug} to ${filePath}.`);
+  const {
+    item,
+    strHTML,
+    outputFilePath,
+  } = args;
+
+  logger.debug(`Writing ${item.slug} => ${outputFilePath}`);
+  await fs.mkdir(path.dirname(outputFilePath), { recursive: true });
+  await fs.writeFile(outputFilePath, strHTML);
+  logger.debug(`Done writing ${item.slug} to ${outputFilePath}.`);
 };
 
-export const renderAllContentItems = async (items: ContentItem[], patrika: Patrika) => {
+interface RenderAllContentItemsArgs {
+  items: ContentItem[];
+  patrika: Patrika;
+  renderToString: RenderToString;
+  getURLRelativeToRoot: GetURLRelativeToRoot;
+  outDir: string;
+}
+export const renderAllContentItems = async (args: RenderAllContentItemsArgs) => {
   const logger = getLogger("implementation", rootLogger);
+  const {
+    items,
+    patrika,
+    renderToString,
+    getURLRelativeToRoot,
+    outDir,
+  } = args;
+
   // We reload the template to account for changes in the template.
   logger.debug("Reload the template...");
-  const { renderToString } = await loadTemplate();
   logger.debug("Done reloading the template. Proceed...");
   for (const item of items) {
     logger.debug(`Rendering ${item.slug}...`);
@@ -34,10 +52,20 @@ export const renderAllContentItems = async (items: ContentItem[], patrika: Patri
     if (Array.isArray(output)) {
       logger.debug(`Multiple (${output.length}) files will be written for ${item.slug}.`);
       for (const [index, strHTML] of output.entries()) {
-        await writeHTMLFile({item, strHTML, index});
+        const outputFilePath = path.join(outDir, getURLRelativeToRoot(item, index)); // we call getURLRelativeToRoot with index (page number) if it exists.
+        await writeHTMLFile({
+          item,
+          strHTML,
+          outputFilePath,
+        });
       }
     } else {
-      await writeHTMLFile({ item, strHTML: output });
+      const outputFilePath = path.join(outDir, getURLRelativeToRoot(item));
+      await writeHTMLFile({
+        item,
+        strHTML: output,
+        outputFilePath,
+      });
     }
   }
 };

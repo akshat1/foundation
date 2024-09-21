@@ -6,7 +6,7 @@ import { FrontMatterAttributes } from "./front-matter/index.js";
 import { OnShortCode } from "./markdown/extensions/OnShortCode.js";
 import { renderAllMarkdown } from "./markdown/index.js";
 export { RunnerConfiguration } from "./runner/RunnerConfiguration.js";
-export { Template } from "./Template.js";
+export { Template } from "./runner/Template.js";
 
 export {
   ContentItem,

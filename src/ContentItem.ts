@@ -1,8 +1,9 @@
 import { Stats } from "fs";
-import { FrontMatterResult } from "front-matter";
-import { FrontMatterAttributes } from "./front-matter/index.js";
-import { loadTemplate, Template } from "./Template.js";
 import path from "node:path";
+import { FrontMatterResult } from "front-matter";
+import { GetSlug } from "./GetSlug.js";
+import { GetURLRelativeToRoot } from "./GetURLRelativeToRoot.js";
+import { FrontMatterAttributes } from "./front-matter/index.js";
 
 /**
  * @TODO Rationalise this. Move most things into frontMatter attributes (which itself should be open ended; probably
@@ -28,7 +29,7 @@ export interface ContentItem {
   // User supplied data (as part of the frontMatter section).
   id: string;
   title: string;
-  publishDate: string;
+  publishDate: Date;
   draft?: boolean;
 
   // All other user supplied data (as part of the frontMatter section) lives here.
@@ -41,20 +42,21 @@ export const comparePostsByPublishedDate = (a: ContentItem, b: ContentItem): num
   return dB - dA;
 };
 
-export const getPublishDate = (args: { attributes: FrontMatterAttributes, stats: Stats }): string|null => {
-  const strDate = args.attributes?.publishDate || args.stats.ctime;
-  if (strDate) {
-    const date = new Date(strDate);
-    return date.toISOString().replace(/T.*$/, "");
+export const getPublishDate = (args: { attributes: FrontMatterAttributes, stats: Stats }): Date => {
+  if (args.attributes?.publishDate) {
+    return args.attributes.publishDate;
   }
 
-  return null;
+  return new Date(args.stats.ctime);
 };
 
 export interface ToContentItemArgs {
-  fmData: FrontMatterResult<FrontMatterAttributes>,
-  sourceFilePath: string,
-  stats: Stats,
+  fmData: FrontMatterResult<FrontMatterAttributes>;
+  sourceFilePath: string;
+  stats: Stats;
+  getSlug: GetSlug;
+  getURLRelativeToRoot: GetURLRelativeToRoot;
+  outDir: string;
 }
 
 /**
@@ -70,10 +72,10 @@ export const toContentItem = async (args: ToContentItemArgs): Promise<ContentIte
     sourceFilePath,
     fmData,
     stats,
+    getSlug,
+    getURLRelativeToRoot,
+    outDir,
   } = args;
-
-  const template = await loadTemplate();
-  const conf = await template.getConfig();
 
   const {
     attributes,
@@ -111,9 +113,9 @@ export const toContentItem = async (args: ToContentItemArgs): Promise<ContentIte
     title,
   };
 
-  item.slug = template.getSlug(item);
-  item.url = template.getURLRelativeToRoot(item);
-  item.filePath = path.join(conf.outDir, item.url);
+  item.slug = getSlug(item);
+  item.url = getURLRelativeToRoot(item);
+  item.filePath = path.join(outDir, item.url);
 
   return item;
 };
