@@ -22,34 +22,70 @@ In the stand alone mode,
 ```sh
 $ mkdir my-personal-website
 $ cd my-personal-website
-$ mkdir content    # All your markdown content goes into this directory
-$ mkdir template   # Your template goes into this directory
-$ touch template.js
-$ touch runner-config.json
+$ mkdir content                # All your markdown content goes into this directory
+$ mkdir src                    # Your template goes into this directory
+$ touch src/index.js
 $ echo "@akshat1:registry=https://warehouse.akshatmedia.com" >> .npmrc
 $ npm init
 $ npm i -d @akshat1/patrika
-$ # flesh out runner config and template as describe later
-$ npx patrika -c runner-config
-```
-
-#### Runner configuration
-
-```json
-{
-  "watchedPaths": ["template", "content"],
-  "outDir": "_site",
-  "template": "template/index.js",
-  "pagesGlob": "content/pages/**/*.md",
-  "postsGlob": "content/posts/**/*.md"
-}
+$ npx patrika -t src/index.js
 ```
 
 #### Template
 
+```ts
+// This is a TS example just to illustrate use of various interfaces from Patrika.
+// You are free to use JS, or any compile to JS language; just pass the compiled JS to patrika on the CLI.
+import { ContentItem, Patrika, Template, RunnerConfiguration } from "@akshat1/patrika";
+import path from "node:path";
+import slugify from "slugify";
+import { renderToString } from "./renderer/index.js";
+
+const config: RunnerConfiguration = {
+  "watchedPaths": ["template", "content", "src/styles"],
+  "outDir": "_site",
+  "template": "template/index.js",
+  "lessDir": "src/styles/",
+  "contentGlob": "content/**/*.md",
+};
+
+const getSlug = ({ sourceFilePath, title }: ContentItem) => slugify((title ?? path.basename(sourceFilePath).replace(/\.md$/, ""))).toLowerCase();
+
+const getURLRelativeToRoot = (item: ContentItem, pageNumber: number) => {
+  const {
+    id,
+    slug,
+    frontMatter,
+  } = item;
+
+  const { type } = frontMatter;
+  if (type === "page") {
+    const fileName = pageNumber ? `index-${pageNumber}.html` : "index.html";
+    return id === "site-index" ? fileName : `${slug}/${fileName}`;
+  } else if (type === "post") {
+    const publishDate = new Date(frontMatter.publishDate);
+    return path.join("posts", publishDate.getFullYear().toString(), publishDate.getMonth().toString(), `${slug}.html`);
+  }
+
+  throw new Error(`Unknown item type: ${type}`);
+};
+
+const template: Template = {
+  getSlug,
+  renderToString,
+  getURLRelativeToRoot,
+  getConfig: () => config,
+  onShortCode: async (args: Record<string, unknown>, patrika: Patrika) => "",
+};
+
+export default template;
+```
+
+#### Renderer
+
 Patrika doesn't care which frontend framework you use. It only expects the template to provide a `renderToString` function.
 
-Here's a really simple TypeScript example (remember Patrika expects JS; you'd need to compile this first).
+Here's a really simple TypeScript example.
 
 ```ts
 // src/index.ts ==> template/index.js
