@@ -18,17 +18,6 @@ name = "To Do"
   linkCommits = [ ]
 
   [[processes.tasks]]
-  id = "h5hth4j5oya1o0m4cyw928s1"
-  title = "fmData.publishDate - string or Date?"
-  description = "<p>Find out where fmData.publishDate is being converted from string to Date; and decide whether we want it to be a Date after all. Update the interface or code accordingly.</p>"
-  tag = "bug"
-  linkFiles = [ ]
-  dueDate = ""
-  checkList = [ ]
-  priority = ""
-  linkCommits = [ ]
-
-  [[processes.tasks]]
   id = "u8rg6yhm1mxx4ix7yzhxafnw"
   title = "Write more tests before the lack of tests gets in the way of refactoring."
   description = ""
@@ -73,4 +62,14 @@ This is required because
 [[processes]]
 id = "process3"
 name = "Done"
-tasks = [ ]
+
+  [[processes.tasks]]
+  id = "h5hth4j5oya1o0m4cyw928s1"
+  title = "fmData.publishDate - string or Date?"
+  description = "<p>Find out where fmData.publishDate is being converted from string to Date; and decide whether we want it to be a Date after all. Update the interface or code accordingly.</p><hr><p>Turns out FrontMatter reads <code>publishDate</code> as a <code>Date</code> object. For now, I'm calling this one solved, but I'll think about hardening things when I implement schema validation and item augmentation by the template.</p>"
+  tag = "bug"
+  linkFiles = [ ]
+  dueDate = ""
+  checkList = [ ]
+  priority = ""
+  linkCommits = [ ]
