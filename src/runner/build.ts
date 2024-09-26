@@ -1,6 +1,7 @@
 import { getLogger } from "@akshat1/js-logger";
+import { copyStaticAssets } from "../copyStaticAssets.js";
 import { getPatrika } from "../index.js";
-import { flushTemplate, loadTemplate } from "./Template.js";
+import { loadTemplate } from "./Template.js";
 import { buildStyle } from "./buildStyle.js";
 import { renderAllContentItems } from "./renderAllContentItems.js";
 
@@ -16,9 +17,7 @@ export const build = async () => {
   logger.debug("Build everything...");
   isBuilding = true;
 
-  // Flush and reload template; because the user may have changed their template.
-  await flushTemplate();
-  const template = await loadTemplate();
+  const template = await loadTemplate(true);
   logger.debug("Template loaded afresh.", template);
 
   const {
@@ -46,6 +45,7 @@ export const build = async () => {
   const contentItems = await patrika.find();
   logger.debug("Found content items:", contentItems.length);
   await Promise.all([
+    copyStaticAssets(config),
     buildStyle({
       outDir,
       lessDir: config.lessDir,

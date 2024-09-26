@@ -1,3 +1,4 @@
+import { createRequire } from "node:module";
 import path from "node:path";
 import { getLogger } from "@akshat1/js-logger";
 import { GetSlug } from "../GetSlug.js";
@@ -39,20 +40,24 @@ const validateTemplate = (template: Template): boolean => {
 
 let template: Template;
 
-/**
- * Force a template reload next time it is accessed.
- */
-export const flushTemplate = () => {
-  getLogger("flushTemplate", rootLogger).debug("Flushing template.");
-  template = null;
-};
-
-const tryLoading = async (templatePath: string, terminate?: boolean) => {
+const tryLoading = async (flushTemplate: boolean, templatePath: string, terminate?: boolean) => {
+  const logger = getLogger("tryLoading", rootLogger);
   try {
+    if (flushTemplate) {
+      logger.debug("Flushing require cache...");
+      const require = createRequire(import.meta.url);
+      for (const key in require.cache) {
+        logger.debug(`Delete ${key}`);
+        delete require.cache[key];
+      }
+    }
+    
+    logger.debug(`Importing template from ${templatePath}...`);
     return await import(`${templatePath}?t=${Date.now()}`);
   } catch (err) {
     if (!terminate) {
-      return tryLoading(path.join(process.cwd(), templatePath), true);
+      logger.debug("Error loading template. Try again...", err);
+      return tryLoading(flushTemplate, path.join(process.cwd(), templatePath), true);
     }
 
     throw err;
@@ -64,16 +69,17 @@ const tryLoading = async (templatePath: string, terminate?: boolean) => {
  * This file is not involved when Patrika is used programmatically.
  * @returns 
  */
-export const loadTemplate = async () => {
+export const loadTemplate = async (flushTemplate?: boolean) => {
   const logger = getLogger("loadTemplate", rootLogger);
   const { template: templatePath } = getCommandLineOptions();
-  if (!template) {
-    logger.debug(`Loading template from ${templatePath}?t=Date.now()...`);
+
+  if (flushTemplate || !template) {
+    logger.debug(`Loading template (flushTemplate: ${flushTemplate}) from ${templatePath}...`);
     logger.debug({
       templatePath,
       cwd: process.cwd(),
     });
-    template = (await tryLoading(`${templatePath}?t=${Date.now()}`)).default;
+    template = (await tryLoading(flushTemplate, templatePath)).default;
     validateTemplate(template);
   }
   
