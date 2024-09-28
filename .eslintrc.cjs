@@ -11,6 +11,7 @@ module.exports = {
   ],
   rules: {
     quotes: ["error", "double", { avoidEscape: true }],
+    "@typescript-eslint/no-unused-vars": "warn",
     "@typescript-eslint/ban-ts-comment": "off",
     "import/order": ["warn", { alphabetize: { order: "asc" } }],
   },

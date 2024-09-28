@@ -47,7 +47,7 @@ const tryLoading = async (flushTemplate: boolean, templatePath: string, terminat
       logger.debug("Flushing require cache...");
       const require = createRequire(import.meta.url);
       for (const key in require.cache) {
-        logger.debug(`Delete ${key}`);
+        // logger.debug(`Delete ${key}`);
         delete require.cache[key];
       }
     }
@@ -56,7 +56,7 @@ const tryLoading = async (flushTemplate: boolean, templatePath: string, terminat
     return await import(`${templatePath}?t=${Date.now()}`);
   } catch (err) {
     if (!terminate) {
-      logger.debug("Error loading template. Try again...", err);
+      logger.debug("Error loading template. Try again with a path from cwd");
       return tryLoading(flushTemplate, path.join(process.cwd(), templatePath), true);
     }
 
@@ -75,10 +75,10 @@ export const loadTemplate = async (flushTemplate?: boolean) => {
 
   if (flushTemplate || !template) {
     logger.debug(`Loading template (flushTemplate: ${flushTemplate}) from ${templatePath}...`);
-    logger.debug({
-      templatePath,
-      cwd: process.cwd(),
-    });
+    // logger.debug({
+    //   templatePath,
+    //   cwd: process.cwd(),
+    // });
     template = (await tryLoading(flushTemplate, templatePath)).default;
     validateTemplate(template);
   }

@@ -33,6 +33,51 @@ id = "process2"
 name = "In Progress"
 
   [[processes.tasks]]
+  id = "dib7y3ppz8r5od980qv14p4q"
+  title = "Revert to accepting a config json instead of template.js"
+  description = "<p>A few days ago we switched from accepting a configuration file which would provide the path to a template file, to accepting a template file which would provide the configuration by means of a function. However now that I have finally fixed teplate reloading on change, I realize that this creates a bit of a mess as the reloaded template might have a new config (including things like outDir, contentGlob, and watch paths). We haven't had a problem yet because the worker thread (which does the reloading now) doesn't call template.getConfig(), but that's purely a matter of chance and we should not depend on serendipity to keep things from breaking. To fix this issue, we need to separate the _rendering_ and the _configuration_ inputs from the user. This is best done by going back to accepting a config file, which would include a module import spec (string, either a local path or URL) for the renderer/template. Then our worker would load this module (as it does currently) while the main thread would never load the renderer (unlike now, where both the threads load it).</p>"
+  tag = "bug"
+  linkFiles = [ ]
+  dueDate = ""
+  priority = ""
+  linkCommits = [ ]
+
+    [[processes.tasks.checkList]]
+    id = "j3j5lherqb8ehsr40097pk3h"
+    title = "Update CLI spec"
+    completed = false
+
+    [[processes.tasks.checkList]]
+    id = "xxmovn5kjwcmlh66jtw5wzxj"
+    title = "Update CLI usage examples"
+    completed = false
+
+    [[processes.tasks.checkList]]
+    id = "tu9qblrahg17yqbwu19ta4b5"
+    title = "Remove loadTemplate from Template.ts."
+    completed = false
+
+    [[processes.tasks.checkList]]
+    id = "qf7denafqpl8s89jhfx4acv1"
+    title = "Replace all calls to `loadTemplate` with a new, `getConfig()` function. Refer to the appropriate PR to find the original implementation. "
+    completed = false
+
+[[processes]]
+id = "process3"
+name = "Done"
+
+  [[processes.tasks]]
+  id = "h5hth4j5oya1o0m4cyw928s1"
+  title = "fmData.publishDate - string or Date?"
+  description = "<p>Find out where fmData.publishDate is being converted from string to Date; and decide whether we want it to be a Date after all. Update the interface or code accordingly.</p><hr><p>Turns out FrontMatter reads <code>publishDate</code> as a <code>Date</code> object. For now, I'm calling this one solved, but I'll think about hardening things when I implement schema validation and item augmentation by the template.</p>"
+  tag = "bug"
+  linkFiles = [ ]
+  dueDate = ""
+  checkList = [ ]
+  priority = ""
+  linkCommits = [ ]
+
+  [[processes.tasks]]
   id = "go0ac2kef3682q5m9jrns0x2"
   title = "Accept string[] from renderToString in order to handle pagination."
   description = ""
@@ -53,21 +98,6 @@ This is required because
 1. Patrika should not be determining the output URL structure.
 2. This would be useful for things like the fanout concept which I'm exploring for generating ad-hoc pages without corresponding md files; such as for creating individual HTML files for each tag."""
   tag = "backlog"
-  linkFiles = [ ]
-  dueDate = ""
-  checkList = [ ]
-  priority = ""
-  linkCommits = [ ]
-
-[[processes]]
-id = "process3"
-name = "Done"
-
-  [[processes.tasks]]
-  id = "h5hth4j5oya1o0m4cyw928s1"
-  title = "fmData.publishDate - string or Date?"
-  description = "<p>Find out where fmData.publishDate is being converted from string to Date; and decide whether we want it to be a Date after all. Update the interface or code accordingly.</p><hr><p>Turns out FrontMatter reads <code>publishDate</code> as a <code>Date</code> object. For now, I'm calling this one solved, but I'll think about hardening things when I implement schema validation and item augmentation by the template.</p>"
-  tag = "bug"
   linkFiles = [ ]
   dueDate = ""
   checkList = [ ]
