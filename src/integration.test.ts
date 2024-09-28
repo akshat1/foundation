@@ -20,7 +20,11 @@ suite("getPatrika", () => {
         lessDir: "foo/style",
         outDir: "bar",
         watchedPaths: ["foo/template", "foo/style", "foo/content"],
-        staticAssets: ["foo/images", "foo/fonts"],
+        staticAssets: {
+          "content/images": "images",
+          "content/scripts": "scripts",
+          "content/css": "styles",
+        },
       },
       getSlug: () => "",
       getURLRelativeToRoot: () => "",
