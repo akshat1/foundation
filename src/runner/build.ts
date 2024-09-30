@@ -47,7 +47,7 @@ export const build = (): Promise<void> => {
       process.exit(1);
     });
     worker.on("exit", () => {
-      getLogger("worker.onError", logger).debug("Worker exit.");
+      getLogger("worker.onExit", logger).debug("Worker exit.");
     });
   });
 };
