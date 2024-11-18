@@ -8,7 +8,6 @@ import { fileWalker } from "./fileWalker.js";
 import { FrontMatterAttributes } from "./front-matter/index.js";
 import { OnShortCode } from "./markdown/extensions/OnShortCode.js";
 import { renderAllMarkdown } from "./markdown/index.js";
-import { RunnerConfiguration } from "./runner/RunnerConfiguration.js";
 export { RunnerConfiguration } from "./runner/RunnerConfiguration.js";
 export { Template } from "./runner/Template.js";
 
@@ -21,11 +20,11 @@ export {
 
 const logger = getLogger("getPatrika");
 export interface GetPatrikaArgs {
-  contentGlob,
+  contentGlob: string;
   onShortCode?: OnShortCode;
   getSlug: GetSlug;
   getURLRelativeToRoot: GetURLRelativeToRoot;
-  config: RunnerConfiguration;
+  outDir: string;
 }
 export const getPatrika = async (args: GetPatrikaArgs): Promise<Patrika> => {
   logger.debug(args);
@@ -34,7 +33,7 @@ export const getPatrika = async (args: GetPatrikaArgs): Promise<Patrika> => {
     contentGlob,
     getSlug,
     getURLRelativeToRoot,
-    config,
+    outDir,
   } = args;
   const db = new PicoDB<ContentItem>();
 
@@ -42,7 +41,7 @@ export const getPatrika = async (args: GetPatrikaArgs): Promise<Patrika> => {
     getSlug,
     getURLRelativeToRoot,
     globPattern: contentGlob,
-    outDir: config.outDir,
+    outDir,
   });
   db.insertMany(items);
 

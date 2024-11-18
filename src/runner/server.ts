@@ -68,8 +68,8 @@ interface ContentResponse {
 
 const getContent = async (reqPath: string): Promise<ContentResponse> => {
   const logger = getLogger("getContent");
-  logger.debug("Getting content for path:", reqPath);
-  let filePath = path.join(runnerConfig.outDir, reqPath);
+  logger.debug(`Getting content for path: ${reqPath} => ${decodeURIComponent(reqPath)}`);
+  let filePath = path.join(runnerConfig.outDir, decodeURIComponent(reqPath));
   let stat = await fs.stat(filePath);
   if (stat.isDirectory()) {
     filePath = path.join(filePath, "index.html");

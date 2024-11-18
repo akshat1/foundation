@@ -32,9 +32,7 @@ export const fileWalker = async (args: FileWalkerArgs): Promise<ContentItem[]> =
       continue;
     }
 
-    debugger;
     const markdown = (await fs.readFile(sourceFilePath)).toString();
-    debugger
     const fmData = getFMData({ markdown, filePath: sourceFilePath });
     const item = await toContentItem({
       sourceFilePath,

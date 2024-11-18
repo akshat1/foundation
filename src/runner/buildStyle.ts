@@ -17,6 +17,7 @@ export const getDestinationPath = (srcFile: string, lessDir: string, outDir: str
   const logger = getLogger("getDestinationPath");
   const result = path.join(
     outDir,
+    path.basename(lessDir),
     path.relative(lessDir, srcFile).replace(/\.less$/, ".css")
   );
 

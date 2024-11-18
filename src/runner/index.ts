@@ -5,11 +5,14 @@ import { doCommandLineValidation, getCommandLineOptions } from "./commandLineArg
 import { debounce } from "./debounce.js";
 import { watch } from "./watch.js";
 
-const logger = getLogger("runner-main");
+const rootLogger = getLogger("runner");
 // Main will be imported by bin/index.js
 export const main = async () => {
+  const logger = getLogger("main", rootLogger);
+  logger.debug("Start");
   await doCommandLineValidation();
   const clOptions = getCommandLineOptions();
+  logger.debug("command line options", clOptions);
   const template = await loadTemplate();
   const conf = template.getConfig();
   await build();

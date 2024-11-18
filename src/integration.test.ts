@@ -1,8 +1,8 @@
 import assert from "node:assert";
 import { test, suite, mock, before } from "node:test";
 import path from "path";
-import { Patrika } from "./Patrika";
-import { getPatrika } from ".";
+import { Patrika } from "./Patrika.js";
+import { getPatrika } from "./index.js";
 
 suite("getPatrika", () => {
   let patrika: Patrika;
@@ -15,13 +15,7 @@ suite("getPatrika", () => {
     patrika = await getPatrika({
       contentGlob: path.join(process.cwd(), "src", "fixtures", "content", "**", "*.md"),
       onShortCode,
-      config: {
-        contentGlob: "foo/content/**/*.md",
-        lessDir: "foo/style",
-        outDir: "bar",
-        template: "foo/template/index.js",
-        watchedPaths: ["foo/template", "foo/style", "foo/content"],
-      },
+      outDir: "bar",
       getSlug: () => "",
       getURLRelativeToRoot: () => "",
     });
