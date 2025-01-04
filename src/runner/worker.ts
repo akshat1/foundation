@@ -43,7 +43,8 @@ const workerMain = async () => {
     getSlug,
     getURLRelativeToRoot,
     onShortCode,
-    renderToString
+    renderToString,
+    getExtraContentItems,
   } = template;
   const {
     contentGlob,
@@ -58,6 +59,7 @@ const workerMain = async () => {
     getURLRelativeToRoot,
     onShortCode,
     outDir,
+    getExtraContentItems,
   });
 
   logger.debug("Build everything...");

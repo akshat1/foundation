@@ -1,6 +1,7 @@
 import { getLogger } from "@akshat1/js-logger";
 import PicoDB from "picodb";
 import { ContentItem } from "./ContentItem.js";
+import { getExtraContentItems } from "./GetExtraContentItems.js";
 import { GetSlug } from "./GetSlug.js";
 import { GetURLRelativeToRoot } from "./GetURLRelativeToRoot.js";
 import { Patrika } from "./Patrika.js";
@@ -25,6 +26,7 @@ export interface GetPatrikaArgs {
   getSlug: GetSlug;
   getURLRelativeToRoot: GetURLRelativeToRoot;
   outDir: string;
+  getExtraContentItems?: getExtraContentItems;
 }
 export const getPatrika = async (args: GetPatrikaArgs): Promise<Patrika> => {
   logger.debug(args);
@@ -49,6 +51,12 @@ export const getPatrika = async (args: GetPatrikaArgs): Promise<Patrika> => {
     find: (query?: Record<string, unknown>, projection?: Record<string, unknown>) => db.find(query, projection).toArray(),
     _db: db,
   };
+
+  // Add extra content items (for things like tags, categories, etc).
+  if (typeof args.getExtraContentItems === "function") {
+    const extraItems = await args.getExtraContentItems(patrika);
+    db.insertMany(extraItems);
+  }
 
   // Render all markdown.
   await renderAllMarkdown({
